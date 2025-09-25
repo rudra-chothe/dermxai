@@ -17,6 +17,7 @@ import reportsRoutes from './routes/reports.js';
 import insightsRoutes from './routes/insights.js';
 import qaRoutes from './routes/qa.js';
 import documentsRoutes from './routes/documents.js';
+import dashboardRoutes from './routes/dashboard.js';
 
 // Load environment variables
 dotenv.config();
@@ -80,6 +81,18 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/insights', insightsRoutes);
 app.use('/api/qa', qaRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// Serve uploaded images
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Cache-Control', 'public, max-age=31536000');
+  next();
+});
+app.use('/uploads', (await import('express')).default.static(path.join(__dirname, '../public/uploads')));
 
 // 404 handler
 app.use('*', (req, res) => {

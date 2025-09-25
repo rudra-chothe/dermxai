@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../contexts/AuthContext";
+import { Card } from "@/components/ui/card";
 
 const Diagnose = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [image, setImage] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const { currentUser, getIdToken } = useAuth();
+  const fileInputRef = useRef(null);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -45,33 +51,61 @@ const Diagnose = () => {
         setImage(e.target.result);
       }
     };
+    setSelectedFile(file);
     reader.readAsDataURL(file);
   };
 
-  const analyzeImage = () => {
-    setIsAnalyzing(true);
+  const analyzeImage = async () => {
+    try {
+      setIsAnalyzing(true);
+      setError(null);
 
-    // Simulate AI analysis with timeout
-    setTimeout(() => {
-      setResult({
-        condition: "Eczema",
-        confidence: 87,
-        description:
-          "Eczema, also known as atopic dermatitis, is a common skin condition that causes inflammation, dryness, and itching.",
-        recommendations: [
-          "Keep the affected area moisturized",
-          "Avoid triggers like certain soaps or fabrics",
-          "Consider over-the-counter hydrocortisone cream",
-          "Consult with a dermatologist for prescription treatments",
-        ],
+      // Find the file from input if not present in state
+      const input = document.getElementById("file-upload");
+      const file = selectedFile ?? (input?.files && input.files[0]);
+      if (!file) {
+        throw new Error("Please select an image file to analyze");
+      }
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      let token = null;
+      try {
+        token = await getIdToken();
+      } catch (e) { }
+
+      const response = await fetch("/api/diagnosis/analyze", {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData,
       });
+
+
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(
+          errText || `Request failed with status ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+
+      console.log(response);
+      console.log(data);
+      setResult(data.result);
+    } catch (e) {
+      setError(e.message);
+    } finally {
       setIsAnalyzing(false);
-    }, 2000);
+    }
   };
 
   const resetAnalysis = () => {
     setImage(null);
     setResult(null);
+    setSelectedFile(null);
   };
 
   return (
@@ -87,11 +121,10 @@ const Diagnose = () => {
 
         {!image && (
           <div
-            className={`border-2 border-dashed rounded-xl h-64 sm:h-80 flex flex-col items-center justify-center p-4 sm:p-6 transition-colors ${
-              isDragging
-                ? "border-dermx-teal bg-dermx-teal/5"
-                : "border-gray-300"
-            }`}
+            className={`border-2 border-dashed rounded-xl h-64 sm:h-80 flex flex-col items-center justify-center p-4 sm:p-6 transition-colors ${isDragging
+              ? "border-dermx-teal bg-dermx-teal/5"
+              : "border-gray-300"
+              }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -119,12 +152,14 @@ const Diagnose = () => {
               className="hidden"
               id="file-upload"
               onChange={handleFileInput}
+              ref={fileInputRef}
             />
-            <label htmlFor="file-upload">
-              <Button className="bg-dermx-teal hover:bg-dermx-teal/90 text-sm sm:text-base">
-                Browse Files
-              </Button>
-            </label>
+            <Button
+              className="bg-dermx-teal hover:bg-dermx-teal/90 text-sm sm:text-base"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              Browse Files
+            </Button>
           </div>
         )}
 
@@ -179,9 +214,11 @@ const Diagnose = () => {
                 )}
               </Button>
             </div>
+            {error && <div className="text-red-600 text-sm">{error}</div>}
           </div>
         )}
 
+        {/* {console.log(result)} */}
         {result && (
           <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 animate-scale">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 sm:mb-6 gap-4">
@@ -231,6 +268,29 @@ const Diagnose = () => {
                     {result.description}
                   </p>
                 </div>
+                {Array.isArray(result.top3) && result.top3.length > 0 && (
+                  <div className="mb-4">
+                    <h3 className="font-semibold mb-2 text-sm sm:text-base">
+                      Top Predictions
+                    </h3>
+                    <div className="space-y-2">
+                      {result.top3.map((t, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between text-sm"
+                        >
+                          <span className="text-gray-700">{t.class}</span>
+                          <span className="text-gray-600">
+                            {t.confidence.toFixed
+                              ? t.confidence.toFixed(2)
+                              : t.confidence}
+                            %
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <h3 className="font-semibold mb-2 text-sm sm:text-base">
                     Recommendations
