@@ -2,6 +2,7 @@ import express from 'express';
 import { uploadImage, handleUploadError } from '../middleware/upload.js';
 import { optionalAuth } from '../middleware/auth.js';
 import diagnosisService from '../services/diagnosisService.js';
+import userService from '../services/userService.js';
 
 const router = express.Router();
 
@@ -12,6 +13,16 @@ router.post('/analyze', optionalAuth, uploadImage.single('image'), handleUploadE
     diagnosisService.validateImageFile(req.file);
 
     const result = await diagnosisService.analyzeImage(req.file, req.user?.userId);
+    
+    // If authenticated and we have a Firebase UID, persist diagnosis and increment stats
+    const firebaseUid = req.user?.uid;
+    if (firebaseUid) {
+      try {
+        await userService.addDiagnosis(firebaseUid, result);
+      } catch (persistErr) {
+        console.warn('⚠️  Diagnosis computed but not persisted to user:', persistErr.message);
+      }
+    }
     console.log("Staring..........");
 
     res.json({

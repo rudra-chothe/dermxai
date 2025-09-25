@@ -82,6 +82,48 @@ class UserService {
     }
   }
 
+  // Append a diagnosis result and increment totalDiagnoses
+  async addDiagnosis(firebaseUid, diagnosisResult) {
+    try {
+      if (!isMongoDBAvailable()) {
+        console.warn('⚠️  MongoDB not available, cannot add diagnosis');
+        return null;
+      }
+
+      const user = await User.findByFirebaseUid(firebaseUid);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const mappedDiagnosis = {
+        condition: diagnosisResult.condition,
+        confidence: diagnosisResult.confidence,
+        description: diagnosisResult.description,
+        top3: Array.isArray(diagnosisResult.top3) ? diagnosisResult.top3.map(t => ({
+          class: t.class,
+          confidence: t.confidence
+        })) : [],
+        recommendations: Array.isArray(diagnosisResult.recommendations) ? diagnosisResult.recommendations : [],
+        diagnosedAt: diagnosisResult.analyzedAt ? new Date(diagnosisResult.analyzedAt) : new Date()
+      };
+
+      const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        {
+          $push: { diagnosedDiseases: mappedDiagnosis },
+          $inc: { 'stats.totalDiagnoses': 1 },
+          $set: { 'stats.lastActivity': new Date(), updatedAt: new Date() }
+        },
+        { new: true, runValidators: true }
+      );
+
+      return updatedUser;
+    } catch (error) {
+      console.error('❌ Error appending diagnosis to user:', error);
+      throw new Error('Failed to append diagnosis to user');
+    }
+  }
+
   // Get user by Firebase UID
   async getUserByFirebaseUid(firebaseUid) {
     try {

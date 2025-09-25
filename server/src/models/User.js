@@ -161,6 +161,43 @@ const userSchema = new mongoose.Schema({
     }
   },
   
+  // Historical AI diagnosis results
+  diagnosedDiseases: [{
+    condition: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    confidence: {
+      type: Number,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    top3: [{
+      class: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      confidence: {
+        type: Number,
+        required: true
+      }
+    }],
+    recommendations: [{
+      type: String,
+      trim: true
+    }],
+    diagnosedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  
   // Account status
   isActive: {
     type: Boolean,
@@ -242,6 +279,7 @@ userSchema.index({ 'stats.lastActivity': -1 });
 userSchema.index({ role: 1 });
 userSchema.index({ isActive: 1 });
 userSchema.index({ lastSignIn: -1 });
+userSchema.index({ 'diagnosedDiseases.diagnosedAt': -1 });
 
 // Pre-save middleware to update the updatedAt field
 userSchema.pre('save', function(next) {
