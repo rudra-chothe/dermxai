@@ -2,6 +2,17 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import { authenticateToken } from '../middleware/auth.js';
 import authService from '../services/authService.js';
+import { uploadImage, handleUploadError } from '../middleware/upload.js';
+import path from 'path';
+
+// Helper to convert relative URLs (e.g., /uploads/...) to absolute
+const toAbsoluteUrl = (req, url) => {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'http');
+  const host = req.get('host');
+  return `${proto}://${host}${url.startsWith('/') ? url : `/${url}`}`;
+};
 
 const router = express.Router();
 
@@ -28,10 +39,11 @@ const profileUpdateValidation = [
 router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const userProfile = await authService.getUserProfile(req.user.uid);
-    
-    res.json({ 
-      user: userProfile 
-    });
+    // Ensure photoURL is absolute for the client
+    if (userProfile && userProfile.photoURL) {
+      userProfile.photoURL = toAbsoluteUrl(req, userProfile.photoURL);
+    }
+    res.json({ user: userProfile });
   } catch (error) {
     console.error('Profile retrieval error:', error);
     
@@ -65,11 +77,11 @@ router.put('/profile', authenticateToken, profileUpdateValidation, async (req, r
     console.log('📋 Update data:', req.body);
     
     const updatedProfile = await authService.updateUserProfile(req.user.uid, req.body);
-    
-    res.json({
-      message: 'Profile updated successfully',
-      user: updatedProfile
-    });
+    // Ensure photoURL is absolute for the client
+    if (updatedProfile && updatedProfile.photoURL) {
+      updatedProfile.photoURL = toAbsoluteUrl(req, updatedProfile.photoURL);
+    }
+    res.json({ message: 'Profile updated successfully', user: updatedProfile });
   } catch (error) {
     console.error('❌ Profile update error:', error);
     
@@ -79,6 +91,32 @@ router.put('/profile', authenticateToken, profileUpdateValidation, async (req, r
     });
   }
 });
+
+// Upload and update profile photo
+router.post('/profile/photo', authenticateToken, uploadImage.single('photo'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded', message: 'Please attach an image file' });
+    }
+
+    // Build public URL for uploaded file
+    const filename = req.file.filename;
+    const relativePhotoURL = `/uploads/${filename}`;
+
+    // Persist new photoURL
+    const updated = await authService.updateUserProfile(req.user.uid, { photoURL: relativePhotoURL });
+
+    // Respond with absolute URL so the client can load it cross-origin
+    const absolutePhotoURL = toAbsoluteUrl(req, relativePhotoURL);
+    if (updated && updated.photoURL) {
+      updated.photoURL = toAbsoluteUrl(req, updated.photoURL);
+    }
+    return res.json({ message: 'Photo updated successfully', photoURL: absolutePhotoURL, user: updated });
+  } catch (error) {
+    console.error('❌ Profile photo upload error:', error);
+    return res.status(500).json({ error: 'Photo upload failed', message: error.message || 'Internal server error' });
+  }
+}, handleUploadError);
 
 // Test endpoint to update user without validation (for testing)
 router.put('/test-update/:uid', async (req, res) => {

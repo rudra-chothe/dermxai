@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "sonner";
 import { ChevronDown, User, LogOut } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const navItems = [
   { name: "Home", path: "/", public: true },
@@ -164,6 +165,7 @@ export function Navbar() {
 
           {/* Desktop Authentication Section */}
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
+            <ThemeToggle />
             {currentUser ? (
               <div className="relative user-menu">
                 <button
@@ -234,7 +236,8 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-md text-gray-700 hover:text-teal-600 transition-all duration-300 hover:scale-110"

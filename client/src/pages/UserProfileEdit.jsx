@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import SimpleDeleteDialog from "../components/SimpleDeleteDialog";
 
 const UserProfileEdit = () => {
-  const { currentUser, updateUserProfile, deleteUserAccount } = useAuth();
+  const { currentUser, updateUserProfile, deleteUserAccount, uploadProfilePhoto } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -59,6 +59,8 @@ const UserProfileEdit = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [activeTab, setActiveTab] = useState("basic");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -255,26 +257,56 @@ const UserProfileEdit = () => {
               <CardContent className="space-y-6">
                 {/* Profile Picture Section */}
                 <div className="flex items-center space-x-4">
-                  {currentUser.photoURL ? (
-                    <img
-                      src={currentUser.photoURL}
-                      alt="Profile"
-                      className="w-20 h-20 rounded-full object-cover"
-                    />
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Preview" className="w-20 h-20 rounded-full object-cover" />
+                  ) : currentUser.photoURL ? (
+                    <img src={currentUser.photoURL} alt="Profile" className="w-20 h-20 rounded-full object-cover" />
                   ) : (
                     <div className="w-20 h-20 bg-dermx-teal rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                      {currentUser.displayName?.charAt(0) ||
-                        currentUser.email?.charAt(0) ||
-                        "U"}
+                      {currentUser.displayName?.charAt(0) || currentUser.email?.charAt(0) || "U"}
                     </div>
                   )}
-                  <div>
-                    <Button type="button" variant="outline" size="sm" disabled>
-                      Change Photo
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="photoInput"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () => setPhotoPreview(reader.result);
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                    <Button type="button" variant="outline" size="sm" onClick={() => document.getElementById('photoInput').click()} disabled={uploadingPhoto}>
+                      {photoPreview ? 'Choose Different' : 'Choose Photo'}
                     </Button>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Photo upload coming soon
-                    </p>
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="bg-dermx-teal hover:bg-dermx-teal/90"
+                      disabled={!photoPreview || uploadingPhoto}
+                      onClick={async () => {
+                        try {
+                          const input = document.getElementById('photoInput');
+                          const file = input?.files?.[0];
+                          if (!file) return;
+                          setUploadingPhoto(true);
+                          await uploadProfilePhoto(file);
+                          toast.success('Photo updated');
+                          setPhotoPreview(null);
+                          input.value = '';
+                        } catch (err) {
+                          toast.error(err.message || 'Failed to update photo');
+                        } finally {
+                          setUploadingPhoto(false);
+                        }
+                      }}
+                    >
+                      {uploadingPhoto ? 'Uploading...' : 'Save Photo'}
+                    </Button>
                   </div>
                 </div>
 
