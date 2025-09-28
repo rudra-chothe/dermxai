@@ -56,27 +56,72 @@ const mockDiagnoses = [
   }
 ];
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+import mlService from './mlService.js';
+import { log } from 'console';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 class DiagnosisService {
   async analyzeImage(imageFile, userId = null) {
-    // Simulate AI processing time
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // If no image, throw
+    this.validateImageFile(imageFile);
 
-    // Get random diagnosis for demo
-    const randomDiagnosis = mockDiagnoses[Math.floor(Math.random() * mockDiagnoses.length)];
-    
-    // Add some randomness to confidence
-    const confidence = Math.max(75, Math.min(95, randomDiagnosis.confidence + (Math.random() - 0.5) * 10));
+    const absolutePath = path.isAbsolute(imageFile.path)
+      ? imageFile.path
+      : path.join(__dirname, '../../', imageFile.path);
 
-    const result = {
-      id: Date.now().toString(),
-      ...randomDiagnosis,
-      confidence: Math.round(confidence),
-      imageUrl: `/uploads/${imageFile.filename}`,
-      analyzedAt: new Date().toISOString(),
-      userId: userId
-    };
+    try {
+      console.log("Running ML Services");
 
-    return result;
+      // Call Python predictor
+      const prediction = await mlService.predictImage(absolutePath);
+
+      const condition = prediction.predictedClass || 'Unknown';
+
+      const confidence = Math.round(prediction.confidence || 0);
+      const top3 = prediction.top3 || [];
+
+      const result = {
+        id: Date.now().toString(),
+        condition,
+        confidence,
+        description: `Predicted skin disease: ${condition}`,
+        recommendations: [
+          'Consult a dermatologist for confirmation',
+          'Follow recommended skincare practices',
+          'Avoid known triggers and protect skin from sun exposure'
+        ],
+        top3,
+        imageUrl: `/uploads/${imageFile.filename}`,
+        analyzedAt: new Date().toISOString(),
+        userId
+      };
+
+      // console.log(result);
+
+
+      return result;
+    } catch (err) {
+      // By default, do NOT return mock results. Optionally allow via env flag.
+      if (process.env.USE_MOCK_FALLBACK === 'true') {
+        const randomDiagnosis = mockDiagnoses[Math.floor(Math.random() * mockDiagnoses.length)];
+        const confidenceVal = Math.max(75, Math.min(95, randomDiagnosis.confidence + (Math.random() - 0.5) * 10));
+        return {
+          id: Date.now().toString(),
+          ...randomDiagnosis,
+          confidence: Math.round(confidenceVal),
+          imageUrl: `/uploads/${imageFile.filename}`,
+          analyzedAt: new Date().toISOString(),
+          userId,
+          fallback: true,
+          error: err.message
+        };
+      }
+      throw err;
+    }
   }
 
   getAnalysisHistory(userId = null) {
@@ -90,7 +135,7 @@ class DiagnosisService {
         imageUrl: "/uploads/sample1.jpg"
       },
       {
-        id: "2", 
+        id: "2",
         condition: "Acne",
         confidence: 94,
         analyzedAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
@@ -110,14 +155,14 @@ class DiagnosisService {
       description: "Eczema, also known as atopic dermatitis, is a common skin condition that causes inflammation, dryness, and itching.",
       recommendations: [
         "Keep the affected area moisturized",
-        "Avoid triggers like certain soaps or fabrics", 
+        "Avoid triggers like certain soaps or fabrics",
         "Consider over-the-counter hydrocortisone cream",
         "Consult with a dermatologist for prescription treatments"
       ],
       severity: "mild",
       treatmentOptions: [
         "Topical corticosteroids",
-        "Moisturizers and emollients", 
+        "Moisturizers and emollients",
         "Antihistamines for itching",
         "Avoid known triggers"
       ],

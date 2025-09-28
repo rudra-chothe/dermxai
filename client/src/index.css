@@ -73,6 +73,26 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* Apply theme variables via Tailwind tokens */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Smooth color/theme transitions */
+html,
+body,
+#root,
+* {
+  transition-property: background-color, color, border-color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
 
 
 

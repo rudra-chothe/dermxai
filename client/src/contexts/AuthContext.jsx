@@ -227,6 +227,30 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       if (currentUser) {
+        // Remove empty string fields that fail server validation
+        const sanitize = (obj) => {
+          if (obj == null) return obj;
+          if (Array.isArray(obj)) return obj; // keep arrays as-is
+          if (typeof obj !== "object") return obj;
+          const result = {};
+          Object.entries(obj).forEach(([key, value]) => {
+            if (value === "" || value === null || value === undefined) {
+              return; // skip empty values
+            }
+            if (typeof value === "object" && !Array.isArray(value)) {
+              const nested = sanitize(value);
+              // only assign nested if it has keys
+              if (nested && Object.keys(nested).length > 0) {
+                result[key] = nested;
+              }
+            } else {
+              result[key] = value;
+            }
+          });
+          return result;
+        };
+
+        const sanitizedUpdates = sanitize(updates);
         // Update Firebase profile (only if it's a valid Firebase user)
         if (
           currentUser.getIdToken &&
@@ -262,7 +286,7 @@ export const AuthProvider = ({ children }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${authToken}`,
             },
-            body: JSON.stringify(updates),
+            body: JSON.stringify(sanitizedUpdates),
           });
 
           if (response.ok) {
@@ -394,6 +418,64 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Upload and update profile photo
+  const uploadProfilePhoto = async (file) => {
+    try {
+      setError(null);
+      if (!currentUser) {
+        throw new Error("No user is currently signed in");
+      }
+
+      // Acquire auth token or fallback to mock
+      let authToken;
+      try {
+        if (
+          currentUser.getIdToken &&
+          typeof currentUser.getIdToken === "function"
+        ) {
+          authToken = await currentUser.getIdToken();
+        } else {
+          throw new Error("getIdToken method not available");
+        }
+      } catch (tokenError) {
+        authToken = `mock-token-${currentUser.uid}`;
+      }
+
+      const formData = new FormData();
+      formData.append("photo", file);
+
+      const response = await fetch("/api/users/profile/photo", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || "Failed to upload photo");
+      }
+
+      const data = await response.json();
+      const newUrl = data.photoURL;
+
+      // Best-effort update on Firebase profile
+      try {
+        await updateProfile(currentUser, { photoURL: newUrl });
+      } catch (_) {}
+
+      // Update MongoDB profile and local state
+      await updateUserProfile({ photoURL: newUrl });
+      setCurrentUser(Object.assign(currentUser, { photoURL: newUrl }));
+
+      return newUrl;
+    } catch (e) {
+      setError(e.message);
+      throw e;
+    }
+  };
+
   // Clear error
   const clearError = () => {
     setError(null);
@@ -448,6 +530,7 @@ export const AuthProvider = ({ children }) => {
                 uid: user.uid,
                 email: user.email,
                 emailVerified: user.emailVerified,
+                photoURL: user.photoURL || profileData.user?.photoURL || null,
               });
 
               setCurrentUser(enhancedUser);
@@ -496,6 +579,7 @@ export const AuthProvider = ({ children }) => {
     sendVerificationEmail,
     deleteUserAccount,
     getIdToken,
+    uploadProfilePhoto,
     clearError,
   };
 
