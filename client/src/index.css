@@ -260,6 +260,61 @@ body,
   }
 }
 
+/* Custom scrollbar styles for chatbot */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.chat-scrollbar:hover {
+  scrollbar-color: rgba(161, 161, 170, 0.5) transparent;
+}
+
+.dark .chat-scrollbar:hover {
+  scrollbar-color: rgba(113, 113, 122, 0.5) transparent;
+}
+
+/* Webkit scrollbar styles */
+.chat-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.chat-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.5);
+}
+
+.dark .chat-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(113, 113, 122, 0.5);
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.8);
+}
+
+.dark .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(113, 113, 122, 0.8);
+}
+
+/* Hide scrollbar when content doesn't overflow */
+.chat-scrollbar.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-scrollbar.no-scroll {
+  scrollbar-width: none;
+}
+
 /* Improved accessibility with reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -28,7 +28,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
   const { currentUser, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // State for user account menu
   const [accountMenuAnchor, setAccountMenuAnchor] = React.useState(null);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = React.useState(false);
@@ -101,14 +101,18 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
   // Close menu when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isAccountMenuOpen && !event.target.closest('.account-menu-container')) {
+      if (
+        isAccountMenuOpen &&
+        !event.target.closest(".account-menu-container")
+      ) {
         handleAccountMenuClose();
       }
     };
 
     if (isAccountMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isAccountMenuOpen]);
 
@@ -139,7 +143,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
     if (currentUser.displayName) {
       return currentUser.displayName
         .split(" ")
-        .map(name => name.charAt(0))
+        .map((name) => name.charAt(0))
         .join("")
         .toUpperCase()
         .slice(0, 2);
@@ -152,7 +156,9 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
 
   // Get user display name
   const getUserDisplayName = () => {
-    return currentUser.displayName || currentUser.email?.split("@")[0] || "User";
+    return (
+      currentUser.displayName || currentUser.email?.split("@")[0] || "User"
+    );
   };
 
   return (
@@ -167,7 +173,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
 
       {/* Sidebar */}
       <div
-        className={`
+        className={` 
         fixed top-0 left-0 h-full bg-white shadow-lg z-50 transition-all duration-300 ease-in-out
         ${isCollapsed ? "w-12 sm:w-16" : "w-56 sm:w-64"} 
         lg:relative lg:translate-x-0
@@ -252,7 +258,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
                 aria-expanded={isAccountMenuOpen}
                 aria-haspopup="true"
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     handleAccountMenuOpen(e);
                   }
@@ -262,19 +268,19 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
                   {getUserInitials()}
                 </div>
                 {!isCollapsed && (
-                  <ChevronDown 
+                  <ChevronDown
                     className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-                      isAccountMenuOpen ? 'rotate-180' : ''
-                    }`} 
+                      isAccountMenuOpen ? "rotate-180" : ""
+                    }`}
                   />
                 )}
               </button>
 
               {/* Account Menu */}
               {isAccountMenuOpen && (
-                <div 
+                <div
                   className="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
-                  style={{ minWidth: '200px' }}
+                  style={{ minWidth: "200px" }}
                 >
                   {/* User Info Header */}
                   <div className="p-4 border-b border-gray-200">
@@ -312,7 +318,7 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
                       <User className="w-4 h-4 mr-3" />
                       Profile
                     </button>
-                    
+
                     <button
                       onClick={handleSettingsClick}
                       className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -324,17 +330,25 @@ const Sidebar = ({ isOpen = true, onToggle }) => {
 
                   <div className="border-t border-gray-200 py-2">
                     <div className="px-4 py-2">
-                      <p className="text-xs text-gray-500 font-medium">Quick Actions</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Quick Actions
+                      </p>
                     </div>
                     <button
-                      onClick={() => { navigate("/diagnose"); handleAccountMenuClose(); }}
+                      onClick={() => {
+                        navigate("/diagnose");
+                        handleAccountMenuClose();
+                      }}
                       className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       <Upload className="w-4 h-4 mr-3" />
                       New Analysis
                     </button>
                     <button
-                      onClick={() => { navigate("/reports"); handleAccountMenuClose(); }}
+                      onClick={() => {
+                        navigate("/reports");
+                        handleAccountMenuClose();
+                      }}
                       className="w-full flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                     >
                       <BarChart3 className="w-4 h-4 mr-3" />
