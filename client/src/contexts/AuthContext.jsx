@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- // // Send email verification
+  // // Send email verification
   // const sendVerificationEmail = async () => {
   //   try {
   //     setError(null);
@@ -52,14 +52,17 @@ export const AuthProvider = ({ children }) => {
         // Get Firebase ID token to authenticate with backend
         const token = await currentUser.getIdToken();
 
-        const response = await fetch("http://localhost:5000/api/auth/send-verification-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ email: currentUser.email }),
-        });
+        const response = await fetch(
+          "http://localhost:5000/api/auth/send-verification-email",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ email: currentUser.email }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to send verification email");
@@ -92,7 +95,7 @@ export const AuthProvider = ({ children }) => {
         await updateProfile(result.user, { displayName });
       }
 
-      // // Send email verification
+      // Send email verification
       // console.log("🔥 Sending email verification...");
       // await sendVerificationEmail();
       // ! await sendEmailVerification(result.user);
@@ -384,9 +387,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
- 
-
-
   // Get Firebase ID token
   const getIdToken = async (forceRefresh = false) => {
     try {
@@ -497,7 +497,7 @@ export const AuthProvider = ({ children }) => {
       // Best-effort update on Firebase profile
       try {
         await updateProfile(currentUser, { photoURL: newUrl });
-      } catch (_) { }
+      } catch (_) {}
 
       // Update MongoDB profile and local state
       await updateUserProfile({ photoURL: newUrl });
