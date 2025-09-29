@@ -340,18 +340,49 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Send email verification
-  const sendVerificationEmail = async () => {
-    try {
-      setError(null);
-      if (currentUser) {
-        await sendEmailVerification(currentUser);
+  // // Send email verification
+  // const sendVerificationEmail = async () => {
+  //   try {
+  //     setError(null);
+  //     if (currentUser) {
+  //       await sendEmailVerification(currentUser);
+  //       console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Email verification sent");
+  //     }
+  //   } catch (error) {
+  //     setError(error.message);
+  //     throw error;
+  //   }
+  // };
+
+  //! Send email verification (frontend)
+const sendVerificationEmail = async () => {
+  try {
+    setError(null);
+    if (currentUser) {
+      // Get Firebase ID token to authenticate with backend
+      const token = await currentUser.getIdToken();
+
+      const response = await fetch("http://localhost:5000/api/auth/send-verification-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: currentUser.email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send verification email");
       }
-    } catch (error) {
-      setError(error.message);
-      throw error;
+
+      console.log("✅ Custom verification email requested via backend");
     }
-  };
+  } catch (error) {
+    setError(error.message);
+    throw error;
+  }
+};
+
 
   // Get Firebase ID token
   const getIdToken = async (forceRefresh = false) => {
