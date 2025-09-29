@@ -95,6 +95,7 @@ export const AuthProvider = ({ children }) => {
         await updateProfile(result.user, { displayName });
       }
 
+      
       // Send email verification
       // console.log("🔥 Sending email verification...");
       // await sendVerificationEmail();
