@@ -165,7 +165,7 @@ export function Navbar() {
 
           {/* Desktop Authentication Section */}
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
-            <ThemeToggle />
+          {/* <ThemeToggle /> */}
             {currentUser ? (
               <div className="relative user-menu">
                 <button
