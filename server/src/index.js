@@ -18,6 +18,7 @@ import insightsRoutes from "./routes/insights.js";
 import qaRoutes from "./routes/qa.js";
 import documentsRoutes from "./routes/documents.js";
 import dashboardRoutes from "./routes/dashboard.js";
+import emailVerificationRoute from "./routes/send-verification-email.js";
 
 // Load environment variables
 dotenv.config();
@@ -91,6 +92,7 @@ app.use("/api/insights", insightsRoutes);
 app.use("/api/qa", qaRoutes);
 app.use("/api/documents", documentsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/auth", emailVerificationRoute);
 
 // Serve uploaded images
 import path from "path";
