@@ -95,7 +95,6 @@ export const authenticateToken = async (req, res, next) => {
     }
     
     return res.status(403).json({
-      error: 'Invalid token',
       message: 'Token is not valid'
     });
   }
@@ -161,3 +160,7 @@ export const optionalAuth = async (req, res, next) => {
   
   next();
 };
+
+// Export aliases for backward compatibility
+export const auth = authenticateToken;
+export default { authenticateToken, optionalAuth, auth };

@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "install-ai": "node install-ai-deps.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:mongodb": "node test-mongodb.js",
     "test:integration": "node test-integration.js",
@@ -14,6 +15,8 @@
     "test:profile-system": "node test-profile-system.js",
     "test:profile-editing": "node test-profile-editing.js",
     "test:frontend-profile": "node test-profile-editing-frontend.js",
+    "test:ai": "node test-ai-integration.js",
+    "test:server": "node test-server.js",
     "verify": "node verify-setup.js"
   },
   "keywords": [
@@ -25,6 +28,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^1.21.0",
+    "@google/generative-ai": "^0.24.1",
+    "@huggingface/inference": "^4.9.0",
+    "@xenova/transformers": "^2.17.2",
     "axios": "^1.12.2",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
@@ -42,6 +49,7 @@
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
+    "node-fetch": "^3.3.2",
     "nodemon": "^3.0.2"
   }
 }

@@ -86,11 +86,11 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
   };
 
   return (
-    <div className="p-3 md:p-4">
+    <div className="px-3 py-2 md:p-4">
       <div className="max-w-4xl mx-auto">
         {/* Selected Files List */}
         {selectedFiles.length > 0 && (
-          <div className="mb-3 space-y-2 max-h-32 overflow-y-auto">
+          <div className="mb-2 space-y-2 max-h-32 overflow-y-auto">
             {selectedFiles.map((fileObj) => {
               const getFileIcon = (type) => {
                 if (type.startsWith("image/")) return "🖼️";
@@ -149,20 +149,21 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
 
         <div
           className={cls(
-            "flex items-end gap-2 md:gap-3 rounded-2xl border bg-white shadow-sm dark:bg-zinc-950 transition-all duration-200",
-            "border-zinc-300 dark:border-zinc-700 p-3 md:p-4",
+            "flex items-center justify-center gap-2 rounded-3xl border bg-white shadow-lg dark:bg-zinc-950 transition-all duration-200",
+            "border-zinc-200 dark:border-zinc-700 p-2.5 md:p-4",
             isFocused && "ring-2 ring-dermx-teal/20 border-dermx-teal"
           )}
         >
           {/* File Upload Button */}
           <FileUpload
+            className="self-center"
             onFilesSelected={handleFilesSelected}
             selectedFiles={selectedFiles}
             onRemoveFile={handleRemoveFile}
           />
 
           {/* Text Input */}
-          <div className="flex-1 min-w-0 p">
+          <div className="flex-1 min-w-0">
             <textarea
               ref={inputRef}
               value={value}
@@ -172,8 +173,8 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
               placeholder="Ask me about any dermatology concerns..."
               rows={1}
               className={cls(
-                "w-full resize-none bg-transparent text-sm outline-none placeholder:text-zinc-400 transition-all duration-200",
-                "px-0 py-0 min-h-[24px]"
+                "w-full resize-none bg-transparent text-sm md:text-base outline-none placeholder:text-zinc-400 transition-all duration-200",
+                "px-0 py-1 min-h-[24px]"
               )}
               style={{
                 height: "auto",
@@ -190,7 +191,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <button
               className="hidden md:inline-flex items-center justify-center rounded-full p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300 transition-colors"
               title="Voice input"
@@ -204,7 +205,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
                 sending || busy || (!value.trim() && selectedFiles.length === 0)
               }
               className={cls(
-                "inline-flex items-center justify-center rounded-full bg-dermx-teal p-2 text-white shadow-sm transition hover:bg-dermx-teal/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dermx-teal/50",
+                "inline-flex items-center justify-center rounded-full bg-dermx-teal p-2.5 md:p-2 text-white shadow-md transition hover:bg-dermx-teal/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dermx-teal/50",
                 (sending ||
                   busy ||
                   (!value.trim() && selectedFiles.length === 0)) &&
@@ -212,9 +213,9 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
               )}
             >
               {sending || busy ? (
-                <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <Send className="h-3.5 w-3.5 md:h-4 md:w-4" />
+                <Send className="h-4 w-4" />
               )}
             </button>
           </div>

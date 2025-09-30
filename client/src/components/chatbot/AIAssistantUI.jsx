@@ -65,7 +65,7 @@ export default function AIAssistantUI() {
       }
 
       // Call the real API
-      const response = await qaApi.askQuestion(questionWithContext, "Dermatology");
+      const response = await qaApi.askQuestion(questionWithContext);
       
       const asstMsg = {
         id: Math.random().toString(36).slice(2),

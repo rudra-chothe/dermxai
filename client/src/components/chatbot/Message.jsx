@@ -1,24 +1,59 @@
 import { cls } from "./utils";
 import { FileText, Image, Download } from "lucide-react";
+import MarkdownRenderer from "./MarkdownRenderer";
 
-export default function Message({ role, children, files = [], confidence, sources, relatedQuestions, error, onRelatedQuestionClick }) {
+export default function Message({
+  role,
+  children,
+  files = [],
+  confidence,
+  sources,
+  relatedQuestions,
+  error,
+  onRelatedQuestionClick,
+}) {
   const isUser = role === "user";
 
+  // Extract text content from children
+  let textContent = "";
+  if (children?.props?.children && typeof children.props.children === "string") {
+    textContent = children.props.children;
+  } else if (typeof children === "string") {
+    textContent = children;
+  }
+
+  const isMarkdown = !isUser && textContent && typeof textContent === "string";
+
+  // Debug log
+  if (!isUser && typeof textContent === "string" && textContent.length > 0) {
+    console.log("🔍 Message Debug:", {
+      isMarkdown,
+      textContentLength: textContent.length,
+      textContentPreview: textContent.substring(0, 100),
+    });
+  }
+
   const getFileIcon = (type) => {
-    if (type.startsWith('image/')) return Image;
+    if (type?.startsWith("image/")) return Image;
     return FileText;
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+  const formatFileSize = (bytes = 0) => {
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
-  
+
   return (
-    <div className={cls("flex gap-2 md:gap-4 max-w-4xl mx-auto", isUser ? "justify-end" : "justify-start")}>
+    <div
+      className={cls(
+        "flex gap-2 md:gap-4 max-w-4xl mx-auto",
+        isUser ? "justify-end" : "justify-start"
+      )}
+    >
+      {/* Avatar for assistant */}
       {!isUser && (
         <div className="flex-shrink-0 mt-1">
           <div className="h-6 w-6 md:h-8 md:w-8 rounded-full bg-gradient-to-br from-dermx-teal to-dermx-purple flex items-center justify-center">
@@ -39,17 +74,18 @@ export default function Message({ role, children, files = [], confidence, source
           </div>
         </div>
       )}
-      
+
+      {/* Message bubble */}
       <div
         className={cls(
-          "rounded-2xl px-3 py-2 md:px-4 md:py-3 text-sm max-w-[85%] md:max-w-[80%] shadow-sm",
+          "rounded-2xl px-3 py-2 md:px-5 md:py-4 text-base max-w-[85%] md:max-w-[80%] shadow-sm",
           isUser
             ? "bg-dermx-teal text-white rounded-br-md"
-            : "bg-white text-zinc-900 border border-zinc-200 rounded-bl-md dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
+            : "bg-white text-zinc-900 border border-zinc-200 rounded-bl-md dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800"
         )}
       >
-        {/* Files Display */}
-        {files && files.length > 0 && (
+        {/* Files Section */}
+        {files?.length > 0 && (
           <div className="mb-3 space-y-2">
             {files.map((fileObj) => {
               const IconComponent = getFileIcon(fileObj.type);
@@ -58,8 +94,8 @@ export default function Message({ role, children, files = [], confidence, source
                   key={fileObj.id}
                   className={cls(
                     "flex items-center gap-3 rounded-lg p-2 border",
-                    isUser 
-                      ? "bg-white/10 border-white/20" 
+                    isUser
+                      ? "bg-white/10 border-white/20"
                       : "bg-zinc-50 border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700"
                   )}
                 >
@@ -68,44 +104,55 @@ export default function Message({ role, children, files = [], confidence, source
                       src={fileObj.preview}
                       alt={fileObj.name}
                       className="h-10 w-10 rounded object-cover cursor-pointer"
-                      onClick={() => window.open(fileObj.preview, '_blank')}
+                      onClick={() => window.open(fileObj.preview, "_blank")}
                     />
                   ) : (
-                    <IconComponent 
+                    <IconComponent
                       className={cls(
                         "h-5 w-5",
-                        isUser ? "text-white/80" : "text-zinc-500 dark:text-zinc-400"
-                      )} 
+                        isUser
+                          ? "text-white/80"
+                          : "text-zinc-500 dark:text-zinc-400"
+                      )}
                     />
                   )}
-                  
+
                   <div className="flex-1 min-w-0">
-                    <p className={cls(
-                      "truncate text-sm font-medium",
-                      isUser ? "text-white" : "text-zinc-900 dark:text-zinc-100"
-                    )}>
+                    <p
+                      className={cls(
+                        "truncate text-sm font-medium",
+                        isUser
+                          ? "text-white"
+                          : "text-zinc-900 dark:text-zinc-100"
+                      )}
+                    >
                       {fileObj.name}
                     </p>
-                    <p className={cls(
-                      "text-xs",
-                      isUser ? "text-white/70" : "text-zinc-500 dark:text-zinc-400"
-                    )}>
+                    <p
+                      className={cls(
+                        "text-xs",
+                        isUser
+                          ? "text-white/70"
+                          : "text-zinc-500 dark:text-zinc-400"
+                      )}
+                    >
                       {formatFileSize(fileObj.size)}
                     </p>
                   </div>
-                  
+
+                  {/* Download Button */}
                   {fileObj.preview && (
                     <button
                       onClick={() => {
-                        const link = document.createElement('a');
+                        const link = document.createElement("a");
                         link.href = fileObj.preview;
                         link.download = fileObj.name;
                         link.click();
                       }}
                       className={cls(
                         "rounded-full p-1 transition-colors",
-                        isUser 
-                          ? "text-white/70 hover:text-white hover:bg-white/10" 
+                        isUser
+                          ? "text-white/70 hover:text-white hover:bg-white/10"
                           : "text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
                       )}
                       title="Download"
@@ -118,45 +165,32 @@ export default function Message({ role, children, files = [], confidence, source
             })}
           </div>
         )}
-        
+
         {/* Message Content */}
-        {children}
-        
-        {/* Show error messages only */}
+        {isMarkdown ? (
+          <MarkdownRenderer content={textContent} />
+        ) : (
+          children
+        )}
+
+        {/* Error message */}
         {!isUser && error && (
           <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
             <div className="flex items-center gap-2 text-xs text-red-600 dark:text-red-400 mb-2">
               <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
               </svg>
               Response may be limited due to technical issues
             </div>
           </div>
         )}
-        
-        {/* Related Questions - Only show for assistant messages */}
-        {!isUser && relatedQuestions && relatedQuestions.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
-            <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2">Related questions:</p>
-            <div className="space-y-1">
-              {relatedQuestions.slice(0, 3).map((question, index) => (
-                <button
-                  key={index}
-                  className="block w-full text-left text-xs text-dermx-teal hover:text-dermx-purple transition-colors p-1 rounded hover:bg-zinc-50 dark:hover:bg-zinc-800"
-                  onClick={() => {
-                    if (onRelatedQuestionClick) {
-                      onRelatedQuestionClick(question);
-                    }
-                  }}
-                >
-                  • {question}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
-      
+
+      {/* Avatar for user */}
       {isUser && (
         <div className="flex-shrink-0 mt-1">
           <div className="h-6 w-6 md:h-8 md:w-8 rounded-full bg-zinc-400 flex items-center justify-center">

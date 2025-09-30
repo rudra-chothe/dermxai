@@ -1,142 +1,152 @@
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api';
+const API_BASE_URL =
+  (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api";
 
 class QAApi {
-  async askQuestion(question, category = 'General') {
+  // -----------------------
+  // Ask a question
+  // -----------------------
+  async askQuestion(question) {
     try {
       const requestBody = {
         question: question.trim(),
-        category
       };
-      
-      console.log('🚀 QA API Request:', {
+
+      console.log("🚀 QA API Request:", {
         url: `${API_BASE_URL}/qa/ask`,
-        method: 'POST',
+        method: "POST",
         body: requestBody,
-        questionLength: question.trim().length
       });
 
       const headers = {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       };
 
-      // Only add auth token if it exists and is valid
-      const token = localStorage.getItem('token');
-      if (token && token !== 'null' && token !== 'undefined') {
-        headers['Authorization'] = `Bearer ${token}`;
-        console.log('🔑 Using auth token');
+      // Attach token if available
+      const token = localStorage.getItem("token");
+      if (token && token !== "null" && token !== "undefined") {
+        headers["Authorization"] = `Bearer ${token}`;
+        console.log("🔑 Using auth token");
       } else {
-        console.log('🔓 No auth token, making unauthenticated request');
+        console.log("🔓 No auth token, making unauthenticated request");
       }
 
       const response = await fetch(`${API_BASE_URL}/qa/ask`, {
-        method: 'POST',
+        method: "POST",
         headers,
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
 
-      console.log('📡 QA API Response:', {
+      console.log("📡 QA API Response:", {
         status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
+        ok: response.ok,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('❌ QA API Error Response:', errorData);
-        
-        // Handle validation errors with user-friendly messages
-        if (errorData.error === 'Validation failed' && errorData.details) {
-          const validationError = errorData.details[0];
-          if (validationError.msg === 'Question cannot be empty') {
-            throw new Error('Please enter a question');
-          }
-        }
-        
-        throw new Error(errorData.message || errorData.error || 'Failed to get answer');
-      }
 
       const data = await response.json();
-      console.log('✅ QA API Success:', {
+
+      if (!response.ok) {
+        console.error("❌ QA API Error Response:", data);
+
+        if (data.errors?.length) {
+          // Express-validator validation error
+          throw new Error(data.errors[0].msg);
+        }
+
+        throw new Error(data.message || data.error || "Failed to get answer");
+      }
+
+      console.log("✅ QA API Success:", {
         hasResponse: !!data.response,
-        confidence: data.response?.confidence
+        model: data.response?.model,
+        confidence: data.response?.confidence,
       });
+
       return data.response;
     } catch (error) {
-      console.error('QA API Error:', error);
+      console.error("QA API Error:", error.message);
       throw error;
     }
   }
 
-  async getFAQ(category = null, limit = 10) {
+  // -----------------------
+  // Fetch FAQs
+  // -----------------------
+  async getFAQ(limit = 10) {
     try {
       const params = new URLSearchParams();
-      if (category) params.append('category', category);
-      params.append('limit', limit.toString());
+      params.append("limit", limit.toString());
 
       const response = await fetch(`${API_BASE_URL}/qa/faq?${params}`, {
-        headers: {
-          ...(localStorage.getItem('token') && {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          })
-        }
+        headers: this._authHeader(),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch FAQ');
+        throw new Error("Failed to fetch FAQ");
       }
 
       const data = await response.json();
-      return data;
+      return data.faqs;
     } catch (error) {
-      console.error('FAQ API Error:', error);
+      console.error("FAQ API Error:", error.message);
       throw error;
     }
   }
 
-  async searchQA(query, category = null) {
+  // -----------------------
+  // Search QA (if backend supports it)
+  // -----------------------
+  async searchQA(query) {
     try {
       const params = new URLSearchParams();
-      params.append('q', query);
-      if (category) params.append('category', category);
+      params.append("q", query);
 
       const response = await fetch(`${API_BASE_URL}/qa/search?${params}`, {
-        headers: {
-          ...(localStorage.getItem('token') && {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          })
-        }
+        headers: this._authHeader(),
       });
 
       if (!response.ok) {
-        throw new Error('Search failed');
+        throw new Error("Search failed");
       }
 
-      const data = await response.json();
-      return data;
+      return await response.json();
     } catch (error) {
-      console.error('Search API Error:', error);
+      console.error("Search API Error:", error.message);
       throw error;
     }
   }
 
+  // -----------------------
+  // User history (if backend supports it)
+  // -----------------------
   async getUserHistory() {
     try {
       const response = await fetch(`${API_BASE_URL}/qa/user/history`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: this._authHeader(true),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch history');
+        throw new Error("Failed to fetch history");
       }
 
       const data = await response.json();
-      return data.history;
+      return data.history || [];
     } catch (error) {
-      console.error('History API Error:', error);
+      console.error("History API Error:", error.message);
       throw error;
     }
+  }
+
+  // -----------------------
+  // Helpers
+  // -----------------------
+  _authHeader(required = false) {
+    const token = localStorage.getItem("token");
+    if (token && token !== "null" && token !== "undefined") {
+      return { Authorization: `Bearer ${token}` };
+    }
+    if (required) {
+      throw new Error("Authentication required");
+    }
+    return {};
   }
 }
 

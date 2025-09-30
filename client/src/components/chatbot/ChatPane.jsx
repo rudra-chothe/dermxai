@@ -286,7 +286,7 @@ const ChatPane = forwardRef(function ChatPane(
       </div>
 
       {/* Fixed Input Bar at Bottom of Viewport - Respects sidebar on desktop */}
-      <div className="fixed bottom-0 left-0 right-0 md:left-16 bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-sm border-t border-zinc-200/60 dark:border-zinc-800/60 pb-16 md:pb-0 z-40">
+      <div className="fixed bottom-5 left-0 right-0 md:left-16 bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-sm border-t border-zinc-200/60 dark:border-zinc-800/60 pb-16 md:pb-0 z-40">
         <Composer
           ref={composerRef}
           onSend={async (text, files) => {
