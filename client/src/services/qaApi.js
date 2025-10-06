@@ -68,6 +68,73 @@ class QAApi {
   }
 
   // -----------------------
+  // Ask a question about a specific report
+  // -----------------------
+  async askAboutReport(question, reportData) {
+    try {
+      const requestBody = {
+        question: question.trim(),
+        reportData: reportData,
+      };
+
+      console.log("🚀 Report QA API Request:", {
+        url: `${API_BASE_URL}/qa/ask-about-report`,
+        method: "POST",
+        reportId: reportData.id,
+      });
+
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      // Attach token if available
+      const token = localStorage.getItem("token");
+      if (token && token !== "null" && token !== "undefined") {
+        headers["Authorization"] = `Bearer ${token}`;
+        console.log("🔑 Using auth token");
+      } else {
+        console.log("🔓 No auth token, making unauthenticated request");
+      }
+
+      const response = await fetch(`${API_BASE_URL}/qa/ask-about-report`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("📡 Report QA API Response:", {
+        status: response.status,
+        ok: response.ok,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("❌ Report QA API Error Response:", data);
+
+        if (data.errors?.length) {
+          // Express-validator validation error
+          throw new Error(data.errors[0].msg);
+        }
+
+        throw new Error(data.message || data.error || "Failed to get answer about report");
+      }
+
+      console.log("✅ Report QA API Success:", {
+        hasResponse: !!data.response,
+        model: data.response?.model,
+        confidence: data.response?.confidence,
+        reportId: data.response?.reportId,
+      });
+
+      return data.response;
+    } catch (error) {
+      console.error("Report QA API Error:", error.message);
+      throw error;
+    }
+  }
+
+  // -----------------------
   // Fetch FAQs
   // -----------------------
   async getFAQ(limit = 10) {

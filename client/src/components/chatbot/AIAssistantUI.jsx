@@ -28,12 +28,13 @@ export default function AIAssistantUI() {
 
   async function sendMessage(content, files = []) {
     if (!content.trim() && files.length === 0) return;
-    
+
     const now = new Date().toISOString();
     const userMsg = {
       id: Math.random().toString(36).slice(2),
       role: "user",
-      content: content || (files.length > 0 ? `Uploaded ${files.length} file(s)` : ""),
+      content:
+        content || (files.length > 0 ? `Uploaded ${files.length} file(s)` : ""),
       files: files,
       createdAt: now,
     };
@@ -60,13 +61,15 @@ export default function AIAssistantUI() {
           if (f.type.includes("word")) return "Word document";
           return "document";
         });
-        
-        questionWithContext = `I have uploaded ${files.length} file(s): ${fileTypes.join(", ")}. ${content}`;
+
+        questionWithContext = `I have uploaded ${
+          files.length
+        } file(s): ${fileTypes.join(", ")}. ${content}`;
       }
 
       // Call the real API
       const response = await qaApi.askQuestion(questionWithContext);
-      
+
       const asstMsg = {
         id: Math.random().toString(36).slice(2),
         role: "assistant",
@@ -84,15 +87,15 @@ export default function AIAssistantUI() {
         messageCount: prev.messages.length + 1,
         preview: asstMsg.content.slice(0, 80),
       }));
-
     } catch (error) {
-      console.error('Failed to get AI response:', error);
-      
+      console.error("Failed to get AI response:", error);
+
       // Fallback response on error
       const errorMsg = {
         id: Math.random().toString(36).slice(2),
         role: "assistant",
-        content: "I apologize, but I'm having trouble processing your question right now. Please try again in a moment. If the issue persists, you may want to consult with a dermatologist directly for medical advice.",
+        content:
+          "I apologize, but I'm having trouble processing your question right now. Please try again in a moment. If the issue persists, you may want to consult with a dermatologist directly for medical advice.",
         error: true,
         createdAt: new Date().toISOString(),
       };
@@ -141,7 +144,7 @@ export default function AIAssistantUI() {
         onPauseThinking={pauseThinking}
       />
       {/* Debug panel for development */}
-      {import.meta.env.DEV && <DebugPanel />}
+      {/* {import.meta.env.DEV && <DebugPanel />} */}
     </div>
   );
 }

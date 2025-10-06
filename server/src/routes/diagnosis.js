@@ -8,7 +8,6 @@ const router = express.Router();
 
 // Analyze skin image
 router.post('/analyze', optionalAuth, uploadImage.single('image'), handleUploadError, async (req, res) => {
-
   try {
     diagnosisService.validateImageFile(req.file);
 
@@ -23,11 +22,34 @@ router.post('/analyze', optionalAuth, uploadImage.single('image'), handleUploadE
         console.warn('⚠️  Diagnosis computed but not persisted to user:', persistErr.message);
       }
     }
-    console.log("Staring..........");
+
+    // Check if user wants to generate report automatically
+    const { generateReport = false } = req.body;
+    let reportInfo = null;
+
+    if (generateReport && req.user) {
+      try {
+        const report = await diagnosisService.generateReportForDiagnosis(result, req.user);
+        reportInfo = {
+          reportId: report.id,
+          downloadUrl: report.downloadUrl,
+          message: 'Report generated successfully'
+        };
+      } catch (reportError) {
+        console.warn('⚠️  Report generation failed:', reportError.message);
+        reportInfo = {
+          error: 'Report generation failed',
+          message: reportError.message
+        };
+      }
+    }
+
+    console.log("Analysis completed..........");
 
     res.json({
       message: 'Image analyzed successfully',
-      result
+      result,
+      report: reportInfo
     });
   } catch (error) {
     console.error('Analysis error:', error);

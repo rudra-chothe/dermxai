@@ -59,6 +59,7 @@ const mockDiagnoses = [
 import path from 'path';
 import { fileURLToPath } from 'url';
 import mlService from './mlService.js';
+import reportsService from './reportsService.js';
 import { log } from 'console';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -97,11 +98,14 @@ class DiagnosisService {
         top3,
         imageUrl: `/uploads/${imageFile.filename}`,
         analyzedAt: new Date().toISOString(),
-        userId
+        userId,
+        // Additional data for report generation
+        originalFilename: imageFile.originalname,
+        fileSize: imageFile.size,
+        mimeType: imageFile.mimetype
       };
 
       // console.log(result);
-
 
       return result;
     } catch (err) {
@@ -177,6 +181,17 @@ class DiagnosisService {
     };
 
     return analysis;
+  }
+
+  async generateReportForDiagnosis(diagnosisResult, userInfo = null) {
+    try {
+      // Generate comprehensive report
+      const report = await reportsService.generateReport(diagnosisResult, userInfo);
+      return report;
+    } catch (error) {
+      console.error('Error generating report for diagnosis:', error);
+      throw error;
+    }
   }
 
   validateImageFile(file) {

@@ -33,6 +33,34 @@ router.post(
   }
 );
 
+router.post(
+  "/ask-about-report",
+  optionalAuth,
+  [
+    body("question")
+      .trim()
+      .notEmpty()
+      .withMessage("Question is required")
+      .isLength({ min: 1, max: 1000 })
+      .withMessage("Question must be between 1 and 1000 characters"),
+    body("reportData")
+      .notEmpty()
+      .withMessage("Report data is required")
+      .isObject()
+      .withMessage("Report data must be an object"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { question, reportData } = req.body;
+    const response = await qaService.askAboutReport(question, reportData, req.user?.uid);
+    res.json({ response });
+  }
+);
+
 router.get("/faq", (req, res) => {
   const { limit } = req.query;
   const faqs = qaService.getFAQ(limit || 5);

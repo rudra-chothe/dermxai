@@ -194,7 +194,7 @@ const MobileNavigation = () => {
       </div>
 
       {/* Home indicator line */}
-      <div className="w-32 h-1 bg-gray-600 rounded-full mx-auto mb-1"></div>
+      {/* <div className="w-32 h-1 bg-gray-600 rounded-full mx-auto mb-1"></div> */}
     </div>
   );
 };

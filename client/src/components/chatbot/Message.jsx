@@ -49,7 +49,7 @@ export default function Message({
   return (
     <div
       className={cls(
-        "flex gap-2 md:gap-4 max-w-4xl mx-auto",
+        "flex gap-10 md:gap-4 max-w-4xl mx-auto",
         isUser ? "justify-end" : "justify-start"
       )}
     >

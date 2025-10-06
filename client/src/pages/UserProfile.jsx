@@ -60,8 +60,9 @@ const MobileLogoutConfirmationDialog = ({ isOpen, onConfirm, onCancel }) => {
 };
 
 const UserProfile = () => {
-  const { currentUser, sendVerificationEmail, logout } = useAuth();
+  const { currentUser, sendVerificationEmail, resetPassword, logout } = useAuth();
   const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [isSendingResetEmail, setIsSendingResetEmail] = useState(false);
   const [showMobileLogoutConfirm, setShowMobileLogoutConfirm] = useState(false);
   const navigate = useNavigate();
 
@@ -75,6 +76,24 @@ const UserProfile = () => {
       toast.error("Failed to send verification email");
     } finally {
       setIsResendingVerification(false);
+    }
+  };
+
+  const handleSendResetPasswordEmail = async () => {
+    if (!currentUser?.email) {
+      toast.error("No email address found");
+      return;
+    }
+
+    setIsSendingResetEmail(true);
+    try {
+      await resetPassword(currentUser.email);
+      toast.success("Password reset email sent!");
+    } catch (error) {
+      console.error("Error sending password reset email:", error);
+      toast.error("Failed to send password reset email");
+    } finally {
+      setIsSendingResetEmail(false);
     }
   };
 
@@ -289,7 +308,30 @@ const UserProfile = () => {
                 <Button
                   variant="outline"
                   className="w-full justify-start"
-                  disabled
+                  onClick={handleResendVerification}
+                  disabled={isResendingVerification}
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  {isResendingVerification ? "Sending..." : "Send Verification Email"}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={handleSendResetPasswordEmail}
+                  disabled={isSendingResetEmail}
                 >
                   <svg
                     className="w-4 h-4 mr-2"
@@ -304,7 +346,7 @@ const UserProfile = () => {
                       d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                     />
                   </svg>
-                  Change Password
+                  {isSendingResetEmail ? "Sending..." : "Reset Password"}
                 </Button>
 
                 <Button

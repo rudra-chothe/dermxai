@@ -37,6 +37,119 @@ class QAService {
     }
   }
 
+  async askAboutReport(question, reportData, userId = null) {
+    try {
+      // Create a specialized prompt for report-specific questions
+      const reportPrompt = this._createReportPrompt(question, reportData);
+      const aiResponse = await aiService.generateResponse(reportPrompt);
+
+      // Generate report-specific related questions
+      const relatedQuestions = this._generateReportRelatedQuestions(reportData);
+
+      return {
+        id: Date.now().toString(),
+        question,
+        answer: aiResponse.answer,
+        confidence: aiResponse.confidence,
+        sources: [...(aiResponse.sources || []), "Patient Report Analysis"],
+        model: aiResponse.model,
+        relatedQuestions,
+        reportId: reportData.id,
+        answeredAt: new Date().toISOString(),
+        userId,
+      };
+    } catch (err) {
+      console.error("❌ askAboutReport error:", err.message);
+      return {
+        id: Date.now().toString(),
+        question,
+        answer: "⚠️ Error analyzing your report. Please consult a dermatologist for personalized advice.",
+        confidence: 60,
+        sources: ["System"],
+        model: "Fallback",
+        relatedQuestions: [],
+        reportId: reportData.id,
+        answeredAt: new Date().toISOString(),
+        userId,
+      };
+    }
+  }
+
+  _createReportPrompt(question, reportData) {
+    return `
+You are a dermatology AI assistant helping a patient understand their skin analysis report. 
+
+REPORT DETAILS:
+- Condition: ${reportData.condition || 'Unknown'}
+- Confidence Level: ${reportData.confidence || 0}%
+- Summary: ${reportData.summary || 'No summary available'}
+- Generated Date: ${reportData.generatedAt || 'Unknown'}
+- Patient: ${reportData.patientName || 'Anonymous'}
+
+IMPORTANT GUIDELINES:
+1. Provide educational information about the diagnosed condition
+2. Explain medical terms in simple language
+3. Always recommend consulting a dermatologist for treatment decisions
+4. Be empathetic and supportive
+5. Focus on the specific report details provided
+6. Do not provide specific medical treatment advice
+7. Encourage professional medical consultation for serious concerns
+
+PATIENT QUESTION: ${question}
+
+Please provide a helpful, informative response about this specific report while following medical AI guidelines.
+    `;
+  }
+
+  _generateReportRelatedQuestions(reportData) {
+    const condition = reportData.condition?.toLowerCase() || '';
+    
+    // Condition-specific questions
+    const conditionQuestions = {
+      eczema: [
+        "What lifestyle changes can help manage eczema?",
+        "How can I prevent eczema flare-ups?",
+        "What skincare routine is best for eczema?"
+      ],
+      acne: [
+        "What are the different types of acne?",
+        "How long does acne treatment typically take?",
+        "Can diet affect my acne?"
+      ],
+      psoriasis: [
+        "What triggers psoriasis flare-ups?",
+        "Are there different types of psoriasis?",
+        "How is psoriasis typically treated?"
+      ],
+      dermatitis: [
+        "What's the difference between eczema and dermatitis?",
+        "How can I identify my dermatitis triggers?",
+        "What treatments are available for dermatitis?"
+      ],
+      rosacea: [
+        "What are common rosacea triggers?",
+        "How can I manage rosacea symptoms?",
+        "What skincare ingredients should I avoid?"
+      ]
+    };
+
+    // Find matching condition
+    for (const [key, questions] of Object.entries(conditionQuestions)) {
+      if (condition.includes(key)) {
+        return questions;
+      }
+    }
+
+    // Default report-related questions
+    return [
+      "What does this confidence level mean?",
+      "Should I see a dermatologist about this?",
+      "What are the next steps I should take?",
+      "How accurate are these AI diagnoses?",
+      "What should I monitor going forward?"
+    ];
+  }
+
   _generateRelatedQuestions(question) {
     const lowerQuestion = question.toLowerCase();
     

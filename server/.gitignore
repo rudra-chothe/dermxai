@@ -160,3 +160,9 @@ newrelic_agent.log
 *.tsbuildinfo
 .turbo/
 .next/
+
+.vscode/
+
+public/
+public/uploads/*
+!public/uploads/.gitkeep

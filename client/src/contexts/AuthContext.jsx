@@ -258,11 +258,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Reset password
+  // Reset password using backend API
   const resetPassword = async (email) => {
     try {
       setError(null);
-      await sendPasswordResetEmail(auth, email);
+      
+      const response = await fetch("/api/send-reset-password-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send reset email");
+      }
+
+      const data = await response.json();
+      return data;
     } catch (error) {
       setError(error.message);
       throw error;

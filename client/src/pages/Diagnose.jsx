@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
 import { Card } from "@/components/ui/card";
+import Loader from "@/components/ui/Loader";
 
 const Diagnose = () => {
   const [isDragging, setIsDragging] = useState(false);
@@ -13,6 +14,8 @@ const Diagnose = () => {
   const [recentAnalysis, setRecentAnalysis] = useState(null);
   const [loadingRecent, setLoadingRecent] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [generatingReport, setGeneratingReport] = useState(false);
+  const [reportGenerated, setReportGenerated] = useState(null);
   const { currentUser, getIdToken } = useAuth();
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
@@ -79,13 +82,14 @@ const Diagnose = () => {
 
       const formData = new FormData();
       formData.append("image", file);
+      // Note: Automatic report generation is disabled - users will generate reports manually
 
       let token = null;
       try {
         token = await getIdToken();
       } catch (e) {}
 
-      const response = await fetch("/api/diagnosis/analyze", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/diagnosis/analyze`, {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         body: formData,
@@ -103,6 +107,11 @@ const Diagnose = () => {
       console.log(response);
       console.log(data);
       setResult(data.result);
+
+      // Check if report was generated
+      if (data.report && !data.report.error) {
+        setReportGenerated(data.report);
+      }
 
       // Update recent analysis with the new result if user is authenticated
       if (currentUser && data.result) {
@@ -126,6 +135,94 @@ const Diagnose = () => {
     setImage(null);
     setResult(null);
     setSelectedFile(null);
+    setReportGenerated(null);
+  };
+
+  const generateReport = async () => {
+    if (!result || !currentUser) {
+      alert('Please log in and complete an analysis first');
+      return;
+    }
+
+    try {
+      setGeneratingReport(true);
+      setError(null);
+
+      const token = await getIdToken();
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports/generate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          diagnosisData: result
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to generate report');
+      }
+
+      const data = await response.json();
+      console.log('Report generation response:', data);
+      
+      setReportGenerated(data.report);
+      
+      // Show success message
+      const reportInfo = data.report;
+      alert(`Report generated successfully!\n\nReport ID: ${reportInfo.id || reportInfo.reportId}\nCondition: ${reportInfo.condition || result.condition}\nConfidence: ${reportInfo.confidence || Math.round((result.confidence || 0))}%\nStorage: Local Storage\n\nYou can download it now or view it in the Reports page.`);
+      
+    } catch (err) {
+      console.error('Report generation error:', err);
+      setError(`Failed to generate report: ${err.message}`);
+      alert(`Failed to generate report: ${err.message}`);
+    } finally {
+      setGeneratingReport(false);
+    }
+  };
+
+  const downloadReport = async (reportId) => {
+    if (!reportId) {
+      alert('Report ID not found. Please try generating the report again.');
+      return;
+    }
+
+    try {
+      console.log('Downloading report with ID:', reportId);
+      
+      // Local storage only - use API endpoint
+
+      // Use API endpoint for local files
+      const token = await getIdToken();
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports/${reportId}/download`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `diagnosis_report_${reportId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        // Show success message
+        alert('Report downloaded successfully!');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Download failed');
+      }
+    } catch (err) {
+      console.error('Download error:', err);
+      alert(`Failed to download report: ${err.message}. Please try again or check the Reports page.`);
+    }
   };
 
   // Check if device is mobile
@@ -296,7 +393,6 @@ const Diagnose = () => {
 
         {image && !result && (
           <div className="space-y-4 sm:space-y-6">
-            {/* <br /> */}
             <div className="relative rounded-xl overflow-hidden h-64 sm:h-80 bg-gray-100">
               <img
                 src={image}
@@ -318,29 +414,10 @@ const Diagnose = () => {
                 disabled={isAnalyzing}
               >
                 {isAnalyzing ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-4 w-4 sm:h-5 sm:w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                  <div className="flex items-center">
+                    <Loader size="small" className="mr-3" />
                     Analyzing...
-                  </>
+                  </div>
                 ) : (
                   "Analyze Image"
                 )}
@@ -453,9 +530,65 @@ const Diagnose = () => {
             </div>
 
             <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
-              <Button className="w-full bg-dermx-lavender hover:bg-dermx-lavender/90 text-sm sm:text-base">
-                Generate Full Report
-              </Button>
+              {reportGenerated ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-center text-green-600 mb-2">
+                    <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Report Generated Successfully!
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button 
+                      className="flex-1 bg-dermx-teal hover:bg-dermx-teal/90 text-sm sm:text-base"
+                      onClick={() => downloadReport(reportGenerated.reportId || reportGenerated.id)}
+                    >
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-4-4m4 4l4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Download PDF Report
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="flex-1 border-dermx-lavender text-dermx-lavender hover:bg-dermx-lavender hover:text-white text-sm sm:text-base"
+                      onClick={() => window.location.href = '/reports'}
+                    >
+                      View All Reports
+                    </Button>
+                  </div>
+                </div>
+              ) : currentUser ? (
+                <Button 
+                  className="w-full bg-dermx-lavender hover:bg-dermx-lavender/90 text-sm sm:text-base"
+                  onClick={generateReport}
+                  disabled={generatingReport}
+                >
+                  {generatingReport ? (
+                    <div className="flex items-center">
+                      <Loader size="small" className="mr-3" />
+                      Generating Report...
+                    </div>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Generate Full Report
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="text-center">
+                  <p className="text-gray-600 mb-3 text-sm">Please log in to generate detailed reports</p>
+                  <Button 
+                    variant="outline"
+                    className="border-dermx-teal text-dermx-teal hover:bg-dermx-teal hover:text-white"
+                    onClick={() => window.location.href = '/login'}
+                  >
+                    Log In to Generate Report
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -547,26 +680,7 @@ const Diagnose = () => {
         {loadingRecent && currentUser && (
           <Card className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50">
             <div className="flex items-center gap-3">
-              <svg
-                className="animate-spin h-5 w-5 text-dermx-teal"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
+              <Loader size="small" />
               <span className="text-gray-600">Loading recent analysis...</span>
             </div>
           </Card>

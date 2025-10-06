@@ -11,8 +11,8 @@ import { ChevronDown, User, LogOut } from "lucide-react";
 const navItems = [
   { name: "Home", path: "/", public: true },
   { name: "Features", path: "/features", public: true },
-  { name: "Mission", path: "/mission", public: true },
-  { name: "How It Works", path: "/how-it-works", public: true },
+  // { name: "Mission", path: "/mission", public: true },
+  // { name: "How It Works", path: "/how-it-works", public: true },
   { name: "Diagnose", path: "/diagnose", protected: true },
   { name: "Reports", path: "/reports", protected: true },
   { name: "Clinical Insights", path: "/clinical-insights", requireAuth: true },

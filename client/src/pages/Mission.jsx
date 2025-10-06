@@ -927,11 +927,11 @@ const Mission = () => {
       <VisionSection />
       <ValuesSection />
       <ImpactSection />
-      <TeamSection />
+      {/* <TeamSection /> */}
       <StorySection />
       <CommitmentSection />
       <CTASection />
-      <ContactSection />
+      {/* <ContactSection /> */}
     </div>
   );
 };

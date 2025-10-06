@@ -185,7 +185,7 @@ const ChatPane = forwardRef(function ChatPane(
                     "Best treatments for hormonal acne?",
                     "Signs of skin cancer to watch for?",
                     "How to treat dry, itchy skin?",
-                    "When should I see a dermatologist?"
+                    "When should I see a dermatologist?",
                   ].map((question) => (
                     <button
                       key={question}
@@ -205,8 +205,8 @@ const ChatPane = forwardRef(function ChatPane(
 
         {/* Messages - Only show when there are actual conversations */}
         {messages.length > 1 && (
-          <div className="px-3 md:px-4 py-4 md:py-6 space-y-4 md:space-y-6">
-            <div className="max-w-3xl mx-auto space-y-4 md:space-y-6">
+          <div className="px-3 max-w-6xl mx-auto md:px-4 py-4 md:py-6 space-y-6 md:space-y-6">
+            <div className="max-w-6xl mx-auto space-y-6 md:space-y-6">
               {messages.slice(1).map((m) => (
                 <div key={m.id} className="space-y-2">
                   {editingId === m.id ? (
@@ -244,37 +244,41 @@ const ChatPane = forwardRef(function ChatPane(
                       </div>
                     </div>
                   ) : (
-                    <Message 
-                      role={m.role} 
-                      files={m.files}
-                      confidence={m.confidence}
-                      sources={m.sources}
-                      relatedQuestions={m.relatedQuestions}
-                      error={m.error}
-                      onRelatedQuestionClick={(question) => {
-                        if (onSend) {
-                          onSend(question, []);
-                        }
-                      }}
-                    >
-                      <div className="whitespace-pre-wrap">{m.content}</div>
+                    <div className="w-full">
+                      <Message
+                        role={m.role}
+                        files={m.files}
+                        confidence={m.confidence}
+                        sources={m.sources}
+                        relatedQuestions={m.relatedQuestions}
+                        error={m.error}
+                        onRelatedQuestionClick={(question) => {
+                          if (onSend) {
+                            onSend(question, []);
+                          }
+                        }}
+                      >
+                        <div className="whitespace-pre-wrap">{m.content}</div>
+                      </Message>
                       {m.role === "user" && (
-                        <div className="mt-2 flex gap-3 text-[11px] text-zinc-500">
-                          <button
-                            className="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-                            onClick={() => startEdit(m)}
-                          >
-                            <Pencil className="h-3 w-3" /> Edit
-                          </button>
-                          <button
-                            className="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-                            onClick={() => onResendMessage?.(m.id)}
-                          >
-                            <RefreshCw className="h-3 w-3" /> Resend
-                          </button>
+                        <div className="flex justify-end max-w-4xl mx-auto">
+                          <div className="flex gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 mr-10 md:mr-12">
+                            <button
+                              className="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                              onClick={() => startEdit(m)}
+                            >
+                              <Pencil className="h-3 w-3" /> Edit
+                            </button>
+                            <button
+                              className="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                              onClick={() => onResendMessage?.(m.id)}
+                            >
+                              <RefreshCw className="h-3 w-3" /> Resend
+                            </button>
+                          </div>
                         </div>
                       )}
-                    </Message>
+                    </div>
                   )}
                 </div>
               ))}
@@ -286,7 +290,7 @@ const ChatPane = forwardRef(function ChatPane(
       </div>
 
       {/* Fixed Input Bar at Bottom of Viewport - Respects sidebar on desktop */}
-      <div className="fixed bottom-5 left-0 right-0 md:left-16 bg-zinc-50/95 dark:bg-zinc-950/95 backdrop-blur-sm border-t border-zinc-200/60 dark:border-zinc-800/60 pb-16 md:pb-0 z-40">
+      <div className="fixed bottom-0 left-0 right-0 md:left-16 pb-16 md:pb-0 z-40 rounded-3xl">
         <Composer
           ref={composerRef}
           onSend={async (text, files) => {
