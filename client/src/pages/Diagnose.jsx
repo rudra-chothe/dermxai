@@ -594,7 +594,7 @@ const Diagnose = () => {
         )}
 
         {/* Recent Analysis Section */}
-        {currentUser && recentAnalysis && !loadingRecent && (
+        {/* {currentUser && recentAnalysis && !loadingRecent && (
           <Card className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-dermx-teal/5 to-dermx-lavender/5 border-dermx-teal/20 mt-5">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
@@ -675,16 +675,16 @@ const Diagnose = () => {
               </div>
             </div>
           </Card>
-        )}
+        )} */}
 
-        {loadingRecent && currentUser && (
+        {/* {loadingRecent && currentUser && (
           <Card className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gray-50">
             <div className="flex items-center gap-3">
               <Loader size="small" />
               <span className="text-gray-600">Loading recent analysis...</span>
             </div>
           </Card>
-        )}
+        )} */}
       </div>
     </div>
   );
