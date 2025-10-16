@@ -245,14 +245,6 @@ const App = () => (
   </QueryClientProvider>
 );
 
-// // Add to Tailwind config
-// colors= {
-//   dark: {
-//     900: '#0f172a', // bg
-//     800: '#1e293b', // cards
-//     700: '#334155', // borders
-//     100: '#f8fafc', // text
-//   }
-// }
+
 
 export default App;

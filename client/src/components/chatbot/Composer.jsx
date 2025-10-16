@@ -94,17 +94,17 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
 
   return (
     <div className="w-full">
-      <div className="max-w-4xl mx-auto bg-white dark:bg-zinc-900 rounded-3xl m-2">
+      <div className="max-w-4xl mx-auto bg-white rounded-3xl m-2">
         <div
           className={cls(
             "rounded-3xl border shadow-lg transition-all duration-200 mx-2",
-            "border-zinc-200 dark:border-zinc-700 p-2.5 md:p-4",
+            "border-zinc-200 p-2.5 md:p-4",
             isFocused && "ring-2 ring-dermx-teal/20 border-dermx-teal"
           )}
         >
           {/* File Preview Section - Above Input */}
           {selectedFiles.length > 0 && (
-            <div className="mb-3 pb-3 border-b border-zinc-200 dark:border-zinc-700">
+            <div className="mb-3 pb-3 border-b border-zinc-200">
               <div className="flex items-start gap-3">
                 <div className="relative group">
                   {selectedFiles[0].preview ? (
@@ -112,7 +112,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
                       <img
                         src={selectedFiles[0].preview}
                         alt={selectedFiles[0].name}
-                        className="h-20 w-20 md:h-24 md:w-24 rounded-2xl object-cover bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+                        className="h-20 w-20 md:h-24 md:w-24 rounded-2xl object-cover bg-white border border-zinc-200"
                       />
                       <button
                         onClick={() => handleRemoveFile(selectedFiles[0].id)}
@@ -135,7 +135,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
                       </button>
                     </div>
                   ) : (
-                    <div className="h-20 w-20 md:h-24 md:w-24 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center relative">
+                    <div className="h-20 w-20 md:h-24 md:w-24 rounded-2xl bg-zinc-100 border border-zinc-200 flex items-center justify-center relative">
                       <span className="text-3xl">
                         {getFileIcon(selectedFiles[0].type)}
                       </span>
@@ -170,7 +170,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
                             <img
                               src={fileObj.preview}
                               alt={fileObj.name}
-                              className="h-16 w-16 md:h-20 md:w-20 rounded-xl object-cover bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+                              className="h-16 w-16 md:h-20 md:w-20 rounded-xl object-cover bg-white border border-zinc-200"
                             />
                             <button
                               onClick={() => handleRemoveFile(fileObj.id)}
@@ -193,7 +193,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
                             </button>
                           </div>
                         ) : (
-                          <div className="h-16 w-16 md:h-20 md:w-20 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center relative">
+                          <div className="h-16 w-16 md:h-20 md:w-20 rounded-xl bg-zinc-100 border border-zinc-200 flex items-center justify-center relative">
                             <span className="text-2xl">
                               {getFileIcon(fileObj.type)}
                             </span>
@@ -267,7 +267,7 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
             {/* Action Buttons */}
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
-                className="hidden md:inline-flex items-center justify-center rounded-full p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300 transition-colors"
+                className="hidden md:inline-flex items-center justify-center rounded-full p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
                 title="Voice input"
               >
                 <Mic className="h-4 w-4" />
@@ -297,11 +297,11 @@ const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
             </div>
           </div>
         </div>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center py-1">
+        <p className="text-xs text-zinc-500 text-center py-1">
           DermX-AI can make mistakes. Check important info.
         </p>
       </div>
-      {/* <div className="w-full h-1 bg-zinc-50 dark:bg-zinc-800 text-center py-2"></div> */}
+      {/* <div className="w-full h-1 bg-zinc-50 text-center py-2"></div> */}
     </div>
   );
 });

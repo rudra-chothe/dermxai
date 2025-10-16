@@ -89,11 +89,14 @@ const Diagnose = () => {
         token = await getIdToken();
       } catch (e) {}
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/diagnosis/analyze`, {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: formData,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/diagnosis/analyze`,
+        {
+          method: "POST",
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const errText = await response.text();
@@ -140,7 +143,7 @@ const Diagnose = () => {
 
   const generateReport = async () => {
     if (!result || !currentUser) {
-      alert('Please log in and complete an analysis first');
+      alert("Please log in and complete an analysis first");
       return;
     }
 
@@ -149,33 +152,43 @@ const Diagnose = () => {
       setError(null);
 
       const token = await getIdToken();
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports/generate`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          diagnosisData: result
-        })
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/reports/generate`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            diagnosisData: result,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to generate report');
+        throw new Error(errorData.message || "Failed to generate report");
       }
 
       const data = await response.json();
-      console.log('Report generation response:', data);
-      
+      console.log("Report generation response:", data);
+
       setReportGenerated(data.report);
-      
+
       // Show success message
       const reportInfo = data.report;
-      alert(`Report generated successfully!\n\nReport ID: ${reportInfo.id || reportInfo.reportId}\nCondition: ${reportInfo.condition || result.condition}\nConfidence: ${reportInfo.confidence || Math.round((result.confidence || 0))}%\nStorage: Local Storage\n\nYou can download it now or view it in the Reports page.`);
-      
+      alert(
+        `Report generated successfully!\n\nReport ID: ${
+          reportInfo.id || reportInfo.reportId
+        }\nCondition: ${
+          reportInfo.condition || result.condition
+        }\nConfidence: ${
+          reportInfo.confidence || Math.round(result.confidence || 0)
+        }%\nStorage: Local Storage\n\nYou can download it now or view it in the Reports page.`
+      );
     } catch (err) {
-      console.error('Report generation error:', err);
+      console.error("Report generation error:", err);
       setError(`Failed to generate report: ${err.message}`);
       alert(`Failed to generate report: ${err.message}`);
     } finally {
@@ -185,43 +198,48 @@ const Diagnose = () => {
 
   const downloadReport = async (reportId) => {
     if (!reportId) {
-      alert('Report ID not found. Please try generating the report again.');
+      alert("Report ID not found. Please try generating the report again.");
       return;
     }
 
     try {
-      console.log('Downloading report with ID:', reportId);
-      
+      console.log("Downloading report with ID:", reportId);
+
       // Local storage only - use API endpoint
 
       // Use API endpoint for local files
       const token = await getIdToken();
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports/${reportId}/download`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/reports/${reportId}/download`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `diagnosis_report_${reportId}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        
+
         // Show success message
-        alert('Report downloaded successfully!');
+        alert("Report downloaded successfully!");
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Download failed');
+        throw new Error(errorData.message || "Download failed");
       }
     } catch (err) {
-      console.error('Download error:', err);
-      alert(`Failed to download report: ${err.message}. Please try again or check the Reports page.`);
+      console.error("Download error:", err);
+      alert(
+        `Failed to download report: ${err.message}. Please try again or check the Reports page.`
+      );
     }
   };
 
@@ -528,37 +546,65 @@ const Diagnose = () => {
                 </div>
               </div>
             </div>
-
+            <p className="text-red-500 text-base ">
+              *This analysis is for informational purposes only and should not
+              replace professional medical advice. Please consult with a
+              qualified dermatologist for proper diagnosis and treatment.
+            </p>
             <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
               {reportGenerated ? (
                 <div className="space-y-3">
                   <div className="flex items-center justify-center text-green-600 mb-2">
-                    <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="h-5 w-5 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     Report Generated Successfully!
                   </div>
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
+                    <Button
                       className="flex-1 bg-dermx-teal hover:bg-dermx-teal/90 text-sm sm:text-base"
-                      onClick={() => downloadReport(reportGenerated.reportId || reportGenerated.id)}
+                      onClick={() =>
+                        downloadReport(
+                          reportGenerated.reportId || reportGenerated.id
+                        )
+                      }
                     >
-                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-4-4m4 4l4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg
+                        className="h-4 w-4 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-4-4m4 4l4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
                       </svg>
                       Download PDF Report
                     </Button>
-                    <Button 
+                    <Button
                       variant="outline"
                       className="flex-1 border-dermx-lavender text-dermx-lavender hover:bg-dermx-lavender hover:text-white text-sm sm:text-base"
-                      onClick={() => window.location.href = '/reports'}
+                      onClick={() => (window.location.href = "/reports")}
                     >
                       View All Reports
                     </Button>
                   </div>
                 </div>
               ) : currentUser ? (
-                <Button 
+                <Button
                   className="w-full bg-dermx-lavender hover:bg-dermx-lavender/90 text-sm sm:text-base"
                   onClick={generateReport}
                   disabled={generatingReport}
@@ -570,8 +616,18 @@ const Diagnose = () => {
                     </div>
                   ) : (
                     <>
-                      <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      <svg
+                        className="h-4 w-4 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
                       </svg>
                       Generate Full Report
                     </>
@@ -579,11 +635,13 @@ const Diagnose = () => {
                 </Button>
               ) : (
                 <div className="text-center">
-                  <p className="text-gray-600 mb-3 text-sm">Please log in to generate detailed reports</p>
-                  <Button 
+                  <p className="text-gray-600 mb-3 text-sm">
+                    Please log in to generate detailed reports
+                  </p>
+                  <Button
                     variant="outline"
                     className="border-dermx-teal text-dermx-teal hover:bg-dermx-teal hover:text-white"
-                    onClick={() => window.location.href = '/login'}
+                    onClick={() => (window.location.href = "/login")}
                   >
                     Log In to Generate Report
                   </Button>

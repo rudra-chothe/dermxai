@@ -60,7 +60,7 @@ class UserService {
             allowAnalytics: true
           },
           language: 'en',
-          theme: 'auto',
+
           timezone: 'UTC'
         }
       });

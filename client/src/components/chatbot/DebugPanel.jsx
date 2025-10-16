@@ -88,7 +88,7 @@ export default function DebugPanel() {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg shadow-lg p-4 max-w-md z-50">
+    <div className="fixed bottom-4 right-4 bg-white border border-zinc-300 rounded-lg shadow-lg p-4 max-w-md z-50">
       <div className="flex justify-between items-center mb-3">
         <h3 className="font-semibold text-sm">API Debug Panel</h3>
         <button
@@ -119,7 +119,7 @@ export default function DebugPanel() {
             </div>
             
             {testResults.tests.map((test, index) => (
-              <div key={index} className="border border-zinc-200 dark:border-zinc-700 rounded p-2">
+              <div key={index} className="border border-zinc-200 rounded p-2">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">{test.name}</span>
                   <span className={`px-2 py-1 rounded text-xs ${
@@ -130,7 +130,7 @@ export default function DebugPanel() {
                     {test.status}
                   </span>
                 </div>
-                <div className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
+                <div className="mt-1 text-xs text-zinc-600">
                   <pre className="whitespace-pre-wrap">
                     {typeof test.details === 'object' 
                       ? JSON.stringify(test.details, null, 2) 

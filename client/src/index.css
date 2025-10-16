@@ -44,37 +44,9 @@
   --dermx-glow-purple: #a855f7;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --sidebar-background: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
-}
 
-/* Apply theme variables via Tailwind tokens */
+
+/* Apply base styles */
 @layer base {
   * {
     @apply border-border;
@@ -84,7 +56,7 @@
   }
 }
 
-/* Smooth color/theme transitions */
+/* Smooth transitions */
 html,
 body,
 #root,
@@ -272,9 +244,7 @@ body,
   scrollbar-color: rgba(161, 161, 170, 0.5) transparent;
 }
 
-.dark .chat-scrollbar:hover {
-  scrollbar-color: rgba(113, 113, 122, 0.5) transparent;
-}
+
 
 /* Webkit scrollbar styles */
 .chat-scrollbar::-webkit-scrollbar {
@@ -295,17 +265,13 @@ body,
   background: rgba(161, 161, 170, 0.5);
 }
 
-.dark .chat-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: rgba(113, 113, 122, 0.5);
-}
+
 
 .chat-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(161, 161, 170, 0.8);
 }
 
-.dark .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(113, 113, 122, 0.8);
-}
+
 
 /* Hide scrollbar when content doesn't overflow */
 .chat-scrollbar.no-scroll::-webkit-scrollbar {

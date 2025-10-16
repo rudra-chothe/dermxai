@@ -120,7 +120,7 @@ export default function FileUpload({ onFilesSelected, selectedFiles = [], onRemo
       {/* File Input Button - Inline */}
       <button
         onClick={() => fileInputRef.current?.click()}
-        className="flex-shrink-0 inline-flex items-center justify-center rounded-full p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300 transition-colors"
+        className="flex-shrink-0 inline-flex items-center justify-center rounded-full p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 transition-colors"
         title="Attach files (PDF, PNG, JPG, DOCX)"
       >
         <Paperclip className="h-4 w-4" />
@@ -145,12 +145,12 @@ export default function FileUpload({ onFilesSelected, selectedFiles = [], onRemo
           onDragOver={handleDrag}
           onDrop={handleDrop}
         >
-          <div className="rounded-2xl border-2 border-dashed border-dermx-teal bg-white p-8 text-center shadow-lg dark:bg-zinc-900">
+          <div className="rounded-2xl border-2 border-dashed border-dermx-teal bg-white p-8 text-center shadow-lg">
             <Paperclip className="mx-auto h-12 w-12 text-dermx-teal mb-4" />
-            <p className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+            <p className="text-lg font-medium text-zinc-900">
               Drop files here
             </p>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            <p className="text-sm text-zinc-500 mt-1">
               PDF, PNG, JPG, DOCX files only (max 10MB)
             </p>
           </div>

@@ -126,11 +126,7 @@ const userSchema = new mongoose.Schema({
       type: String,
       default: 'en'
     },
-    theme: {
-      type: String,
-      enum: ['light', 'dark', 'auto'],
-      default: 'auto'
-    },
+
     timezone: {
       type: String,
       default: 'UTC'

@@ -133,7 +133,7 @@ export default function AIAssistantUI() {
   }
 
   return (
-    <div className="h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <div className="h-full bg-zinc-50 text-zinc-900">
       <ChatPane
         ref={composerRef}
         conversation={conversation}

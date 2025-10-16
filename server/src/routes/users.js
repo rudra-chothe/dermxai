@@ -32,7 +32,7 @@ const profileUpdateValidation = [
   body('preferences.notifications.push').optional().isBoolean().withMessage('Push notifications must be a boolean'),
   body('preferences.notifications.sms').optional().isBoolean().withMessage('SMS notifications must be a boolean'),
   body('preferences.language').optional().isLength({ min: 2, max: 5 }).withMessage('Language must be between 2 and 5 characters'),
-  body('preferences.theme').optional().isIn(['light', 'dark', 'auto']).withMessage('Invalid theme value')
+
 ];
 
 // Get current user's full profile (including MongoDB data)

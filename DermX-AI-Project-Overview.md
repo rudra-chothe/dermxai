@@ -97,7 +97,6 @@ client/
 - Custom Tailwind configuration with DermX-AI brand colors
 - Mobile-first responsive design
 - Custom animations and transitions
-- Dark/light theme support
 
 #### 2. **Authentication Flow**
 - Firebase Authentication integration
@@ -289,7 +288,7 @@ The User model is comprehensive and includes:
       allowAnalytics: Boolean
     },
     language: String,
-    theme: Enum ['light', 'dark', 'auto'],
+
     timezone: String
   },
   

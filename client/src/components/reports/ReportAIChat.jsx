@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { X, Send, Bot, User, FileText, Calendar, TrendingUp } from "lucide-react";
 import qaApi from "@/services/qaApi";
 import Loader from "@/components/ui/Loader";
+import MarkdownRenderer from "../chatbot/MarkdownRenderer";
 
 const ReportAIChat = ({ report, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -166,12 +167,13 @@ const ReportAIChat = ({ report, onClose }) => {
                     : "bg-gray-100 text-gray-900"
                 }`}
               >
-                <p className="whitespace-pre-wrap">{message.content}</p>
-                {message.confidence && (
+                <MarkdownRenderer content={message.content} />
+                {/* <p className="whitespace-pre-wrap">{message.content}</p> */}
+                {/* {message.confidence && (
                   <p className="text-xs mt-2 opacity-70">
                     Confidence: {message.confidence}%
                   </p>
-                )}
+                )} */}
               </div>
               {message.role === "user" && (
                 <div className="p-2 bg-dermx-teal/10 rounded-full">

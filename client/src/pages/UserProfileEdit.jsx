@@ -53,7 +53,6 @@ const UserProfileEdit = () => {
         allowAnalytics: true,
       },
       language: "en",
-      theme: "auto",
       timezone: "UTC",
     },
   });
@@ -97,7 +96,6 @@ const UserProfileEdit = () => {
               currentUser.preferences?.privacy?.allowAnalytics ?? true,
           },
           language: currentUser.preferences?.language || "en",
-          theme: currentUser.preferences?.theme || "auto",
           timezone: currentUser.preferences?.timezone || "UTC",
         },
       });
@@ -886,24 +884,7 @@ const UserProfileEdit = () => {
                     </Select>
                   </div>
 
-                  <div>
-                    <Label htmlFor="theme">Theme</Label>
-                    <Select
-                      value={formData.preferences.theme}
-                      onValueChange={(value) =>
-                        handlePreferencesChange("theme", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="auto">Auto</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+
 
                   <div>
                     <Label htmlFor="timezone">Timezone</Label>

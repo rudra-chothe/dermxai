@@ -22,7 +22,7 @@ function ThinkingMessage({ onPause }) {
         <span className="text-sm text-zinc-500">DermX-AI is thinking...</span>
         <button
           onClick={onPause}
-          className="ml-auto inline-flex items-center gap-1 rounded-full border border-zinc-300 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+          className="ml-auto inline-flex items-center gap-1 rounded-full border border-zinc-300 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50"
         >
           <Square className="h-3 w-3" /> Pause
         </button>
@@ -154,10 +154,10 @@ const ChatPane = forwardRef(function ChatPane(
                     />
                   </svg>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 mb-2">
                   DermX-AI Assistant
                 </h1>
-                <p className="text-zinc-600 dark:text-zinc-400 text-base md:text-lg">
+                <p className="text-zinc-600 text-base md:text-lg">
                   Get expert dermatology advice powered by AI
                 </p>
               </div>
@@ -175,7 +175,7 @@ const ChatPane = forwardRef(function ChatPane(
 
               {/* Suggested Questions */}
               <div>
-                <h3 className="text-base md:text-lg font-medium text-zinc-700 dark:text-zinc-300 mb-3 md:mb-4">
+                <h3 className="text-base md:text-lg font-medium text-zinc-700 mb-3 md:mb-4">
                   Try asking about:
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
@@ -190,9 +190,9 @@ const ChatPane = forwardRef(function ChatPane(
                     <button
                       key={question}
                       onClick={() => onSend?.(question)}
-                      className="text-left p-3 md:p-4 rounded-xl border border-zinc-200 hover:border-dermx-teal hover:bg-dermx-soft-purple/50 transition-colors dark:border-zinc-700 dark:hover:border-dermx-teal"
+                      className="text-left p-3 md:p-4 rounded-xl border border-zinc-200 hover:border-dermx-teal hover:bg-dermx-soft-purple/50 transition-colors"
                     >
-                      <span className="text-xs md:text-sm text-zinc-700 dark:text-zinc-300">
+                      <span className="text-xs md:text-sm text-zinc-700">
                         {question}
                       </span>
                     </button>
@@ -212,14 +212,14 @@ const ChatPane = forwardRef(function ChatPane(
                   {editingId === m.id ? (
                     <div
                       className={cls(
-                        "rounded-2xl border p-3 md:p-4 bg-white dark:bg-zinc-900",
-                        "border-zinc-200 dark:border-zinc-800"
+                        "rounded-2xl border p-3 md:p-4 bg-white",
+                        "border-zinc-200"
                       )}
                     >
                       <textarea
                         value={draft}
                         onChange={(e) => setDraft(e.target.value)}
-                        className="w-full resize-y rounded-xl bg-transparent p-2 text-sm outline-none border border-zinc-200 dark:border-zinc-700"
+                        className="w-full resize-y rounded-xl bg-transparent p-2 text-sm outline-none border border-zinc-200"
                         rows={3}
                       />
                       <div className="mt-3 flex items-center gap-2 flex-wrap">
@@ -231,13 +231,13 @@ const ChatPane = forwardRef(function ChatPane(
                         </button>
                         <button
                           onClick={saveAndResend}
-                          className="inline-flex items-center gap-1 rounded-full border border-zinc-300 px-3 py-1.5 text-xs hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                          className="inline-flex items-center gap-1 rounded-full border border-zinc-300 px-3 py-1.5 text-xs hover:bg-zinc-50"
                         >
                           <RefreshCw className="h-3.5 w-3.5" /> Save & Resend
                         </button>
                         <button
                           onClick={cancelEdit}
-                          className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                          className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs text-zinc-500 hover:text-zinc-700"
                         >
                           <X className="h-3.5 w-3.5" /> Cancel
                         </button>
@@ -262,15 +262,15 @@ const ChatPane = forwardRef(function ChatPane(
                       </Message>
                       {m.role === "user" && (
                         <div className="flex justify-end max-w-4xl mx-auto">
-                          <div className="flex gap-3 text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 mr-10 md:mr-12">
+                          <div className="flex gap-3 text-[11px] text-zinc-500 mt-1 mr-10 md:mr-12">
                             <button
-                              className="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                              className="inline-flex items-center gap-1 hover:text-zinc-700 transition-colors"
                               onClick={() => startEdit(m)}
                             >
                               <Pencil className="h-3 w-3" /> Edit
                             </button>
                             <button
-                              className="inline-flex items-center gap-1 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                              className="inline-flex items-center gap-1 hover:text-zinc-700 transition-colors"
                               onClick={() => onResendMessage?.(m.id)}
                             >
                               <RefreshCw className="h-3 w-3" /> Resend

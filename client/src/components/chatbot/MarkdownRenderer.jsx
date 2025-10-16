@@ -20,13 +20,13 @@ export default function MarkdownRenderer({ content }) {
           // Headers
           h1: ({ node, ...props }) => (
             <h1
-              className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-8 mb-4 first:mt-0"
+              className="text-2xl font-bold text-gray-900 mt-8 mb-4 first:mt-0"
               {...props}
             />
           ),
           h2: ({ node, ...props }) => (
             <h2
-              className="text-xl font-semibold text-dermx-purple mt-8 mb-4 border-b pb-1 border-gray-200 dark:border-gray-700 first:mt-0"
+              className="text-xl font-semibold text-dermx-purple mt-8 mb-4 border-b pb-1 border-gray-200 first:mt-0"
               {...props}
             />
           ),
@@ -38,7 +38,7 @@ export default function MarkdownRenderer({ content }) {
           ),
           h4: ({ node, ...props }) => (
             <h4
-              className="text-base font-semibold text-gray-800 dark:text-gray-200 mt-5 mb-2 first:mt-0"
+              className="text-base font-semibold text-gray-800 mt-5 mb-2 first:mt-0"
               {...props}
             />
           ),
@@ -46,7 +46,7 @@ export default function MarkdownRenderer({ content }) {
           // Paragraphs
           p: ({ node, ...props }) => (
             <p
-              className="mb-4 leading-7 text-gray-800 dark:text-gray-200"
+              className="mb-4 leading-7 text-gray-800"
               {...props}
             />
           ),
@@ -54,13 +54,13 @@ export default function MarkdownRenderer({ content }) {
           // Lists
           ul: ({ node, ...props }) => (
             <ul
-              className="list-disc pl-6 space-y-2 mb-4 text-gray-700 dark:text-gray-300"
+              className="list-disc pl-6 space-y-2 mb-4 text-gray-700"
               {...props}
             />
           ),
           ol: ({ node, ...props }) => (
             <ol
-              className="list-decimal pl-6 space-y-2 mb-4 text-gray-700 dark:text-gray-300"
+              className="list-decimal pl-6 space-y-2 mb-4 text-gray-700"
               {...props}
             />
           ),
@@ -71,13 +71,13 @@ export default function MarkdownRenderer({ content }) {
           // Emphasis
           strong: ({ node, ...props }) => (
             <strong
-              className="font-bold text-gray-900 dark:text-gray-100"
+              className="font-bold text-gray-900"
               {...props}
             />
           ),
           em: ({ node, ...props }) => (
             <em
-              className="italic text-gray-700 dark:text-gray-300"
+              className="italic text-gray-700"
               {...props}
             />
           ),
@@ -86,12 +86,12 @@ export default function MarkdownRenderer({ content }) {
           code: ({ node, inline, ...props }) =>
             inline ? (
               <code
-                className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded text-sm font-mono text-dermx-teal border border-gray-200 dark:border-gray-700"
+                className="bg-gray-100 px-2 py-0.5 rounded text-sm font-mono text-dermx-teal border border-gray-200"
                 {...props}
               />
             ) : (
               <code
-                className="block text-sm font-mono text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 rounded-lg p-3 my-3 overflow-x-auto border border-gray-200 dark:border-gray-700"
+                className="block text-sm font-mono text-gray-800 bg-gray-100 rounded-lg p-3 my-3 overflow-x-auto border border-gray-200"
                 {...props}
               />
             ),
@@ -109,7 +109,7 @@ export default function MarkdownRenderer({ content }) {
           // Blockquotes (for remedies/tips)
           blockquote: ({ node, ...props }) => (
             <blockquote
-              className="border-l-4 border-dermx-teal bg-dermx-soft-purple/40 px-4 py-3 my-4 rounded-md text-gray-800 dark:text-gray-200"
+              className="border-l-4 border-dermx-teal bg-dermx-soft-purple/40 px-4 py-3 my-4 rounded-md text-gray-800"
               {...props}
             />
           ),
@@ -117,7 +117,7 @@ export default function MarkdownRenderer({ content }) {
           // Horizontal rule
           hr: ({ node, ...props }) => (
             <hr
-              className="my-8 border-t border-gray-300 dark:border-gray-700"
+              className="my-8 border-t border-gray-300"
               {...props}
             />
           ),
@@ -126,33 +126,33 @@ export default function MarkdownRenderer({ content }) {
           table: ({ node, ...props }) => (
             <div className="overflow-x-auto my-4">
               <table
-                className="min-w-full border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700"
+                className="min-w-full border border-gray-200 divide-y divide-gray-200"
                 {...props}
               />
             </div>
           ),
           thead: ({ node, ...props }) => (
             <thead
-              className="bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              className="bg-gray-50 text-gray-900"
               {...props}
             />
           ),
           tbody: ({ node, ...props }) => (
             <tbody
-              className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700"
+              className="bg-white divide-y divide-gray-200"
               {...props}
             />
           ),
           tr: ({ node, ...props }) => <tr {...props} />,
           th: ({ node, ...props }) => (
             <th
-              className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider border border-gray-200 dark:border-gray-700"
+              className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider border border-gray-200"
               {...props}
             />
           ),
           td: ({ node, ...props }) => (
             <td
-              className="px-4 py-2 text-sm border border-gray-200 dark:border-gray-700"
+              className="px-4 py-2 text-sm border border-gray-200"
               {...props}
             />
           ),

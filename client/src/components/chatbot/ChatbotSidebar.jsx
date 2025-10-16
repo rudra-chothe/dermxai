@@ -47,11 +47,11 @@ export default function ChatbotSidebar({
 
   if (sidebarCollapsed) {
     return (
-      <aside className="z-50 flex h-full w-16 shrink-0 flex-col border-r border-zinc-200/60 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="flex items-center justify-center border-b border-zinc-200/60 px-3 py-3 dark:border-zinc-800">
+      <aside className="z-50 flex h-full w-16 shrink-0 flex-col border-r border-zinc-200/60 bg-white">
+        <div className="flex items-center justify-center border-b border-zinc-200/60 px-3 py-3">
           <button
             onClick={() => setSidebarCollapsed(false)}
-            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-zinc-800"
+            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             aria-label="Open sidebar"
             title="Open sidebar"
           >
@@ -62,21 +62,21 @@ export default function ChatbotSidebar({
         <div className="flex flex-col items-center gap-4 pt-4">
           <button
             onClick={createNewChat}
-            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-zinc-800"
+            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="New Chat"
           >
             <Plus className="h-5 w-5" />
           </button>
           
           <button
-            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-zinc-800"
+            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Search"
           >
             <SearchIcon className="h-5 w-5" />
           </button>
           
           <button
-            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-zinc-800"
+            className="rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Folders"
           >
             <FolderIcon className="h-5 w-5" />
@@ -98,12 +98,12 @@ export default function ChatbotSidebar({
       
       <aside
         className={cls(
-          "z-50 flex h-full w-80 shrink-0 flex-col border-r border-zinc-200/60 bg-white dark:border-zinc-800 dark:bg-zinc-900 transition-transform duration-200",
+          "z-50 flex h-full w-80 shrink-0 flex-col border-r border-zinc-200/60 bg-white transition-transform duration-200",
           "fixed inset-y-0 left-0 md:static md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
-      <div className="flex items-center gap-2 border-b border-zinc-200/60 px-3 py-3 dark:border-zinc-800">
+      <div className="flex items-center gap-2 border-b border-zinc-200/60 px-3 py-3">
         <div className="flex items-center gap-2">
           <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-dermx-teal to-dermx-purple text-white shadow-sm">
             <svg
@@ -127,7 +127,7 @@ export default function ChatbotSidebar({
         <div className="ml-auto flex items-center gap-1">
           <button
             onClick={() => setSidebarCollapsed(true)}
-            className="hidden md:block rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-zinc-800"
+            className="hidden md:block rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             aria-label="Close sidebar"
             title="Close sidebar"
           >
@@ -136,7 +136,7 @@ export default function ChatbotSidebar({
           
           <button
             onClick={onClose}
-            className="md:hidden rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 dark:hover:bg-zinc-800"
+            className="md:hidden rounded-xl p-2 hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             aria-label="Close sidebar"
           >
             <PanelLeftClose className="h-5 w-5" />
@@ -157,7 +157,7 @@ export default function ChatbotSidebar({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search conversations..."
-            className="w-full rounded-full border border-zinc-200 bg-white py-2 pl-9 pr-3 text-sm outline-none ring-0 placeholder:text-zinc-400 focus:border-dermx-teal focus:ring-2 focus:ring-dermx-teal/20 dark:border-zinc-800 dark:bg-zinc-950/50"
+            className="w-full rounded-full border border-zinc-200 bg-white py-2 pl-9 pr-3 text-sm outline-none ring-0 placeholder:text-zinc-400 focus:border-dermx-teal focus:ring-2 focus:ring-dermx-teal/20"
           />
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function ChatbotSidebar({
           onToggle={() => setCollapsed((s) => ({ ...s, pinned: !s.pinned }))}
         >
           {pinned.length === 0 ? (
-            <div className="select-none rounded-lg border border-dashed border-zinc-200 px-3 py-3 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            <div className="select-none rounded-lg border border-dashed border-zinc-200 px-3 py-3 text-center text-xs text-zinc-500">
               Pin important conversations for quick access.
             </div>
           ) : (
@@ -203,7 +203,7 @@ export default function ChatbotSidebar({
           onToggle={() => setCollapsed((s) => ({ ...s, recent: !s.recent }))}
         >
           {recent.length === 0 ? (
-            <div className="select-none rounded-lg border border-dashed border-zinc-200 px-3 py-3 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+            <div className="select-none rounded-lg border border-dashed border-zinc-200 px-3 py-3 text-center text-xs text-zinc-500">
               No conversations yet. Start a new one!
             </div>
           ) : (
@@ -229,7 +229,7 @@ export default function ChatbotSidebar({
           <div className="-mx-1">
             <button
               onClick={() => setShowCreateFolderModal(true)}
-              className="mb-2 inline-flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="mb-2 inline-flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100"
             >
               <Plus className="h-4 w-4" /> Create folder
             </button>
@@ -254,12 +254,12 @@ export default function ChatbotSidebar({
           <div className="-mx-1">
             <button
               onClick={() => setShowCreateTemplateModal(true)}
-              className="mb-2 inline-flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="mb-2 inline-flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm text-zinc-600 hover:bg-zinc-100"
             >
               <Plus className="h-4 w-4" /> Create template
             </button>
             {(Array.isArray(templates) ? templates : []).map((template) => (
-              <div key={template.id} className="rounded-lg px-2 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800">
+              <div key={template.id} className="rounded-lg px-2 py-2 text-sm hover:bg-zinc-100">
                 <button
                   onClick={() => onUseTemplate(template)}
                   className="w-full text-left"
@@ -270,7 +270,7 @@ export default function ChatbotSidebar({
               </div>
             ))}
             {(!templates || templates.length === 0) && (
-              <div className="select-none rounded-lg border border-dashed border-zinc-200 px-3 py-3 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+              <div className="select-none rounded-lg border border-dashed border-zinc-200 px-3 py-3 text-center text-xs text-zinc-500">
                 No templates yet. Create your first prompt template.
               </div>
             )}
@@ -278,17 +278,18 @@ export default function ChatbotSidebar({
         </SidebarSection>
       </nav>
 
-      <div className="mt-auto border-t border-zinc-200/60 px-3 py-3 dark:border-zinc-800">
+      <div className="mt-auto border-t border-zinc-200/60 px-3 py-3">
         <div className="flex items-center gap-2 rounded-xl bg-dermx-soft-purple p-2">
           <div className="grid h-8 w-8 place-items-center rounded-full bg-dermx-teal text-xs font-bold text-white">
             U
           </div>
           <div className="min-w-0">
             <div className="truncate text-sm font-medium">DermX User</div>
-            <div className="truncate text-xs text-zinc-500 dark:text-zinc-400">Premium Plan</div>
+            <div className="truncate text-xs text-zinc-500">Premium Plan</div>
           </div>
         </div>
       </div>
     </aside>
+    </>
   );
 }
