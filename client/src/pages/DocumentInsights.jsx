@@ -68,7 +68,7 @@ const DocumentInsights = () => {
   const loadUserDocuments = async () => {
     try {
       const token = await getIdToken();
-      const response = await fetch("/api/documents/files", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/documents/files`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -89,7 +89,7 @@ const DocumentInsights = () => {
 
       const token = await getIdToken();
       const response = await fetch(
-        `/api/documents/rag/upload/files/${currentUser.uid}`,
+        `${import.meta.env.VITE_API_URL}/api/documents/rag/upload/files/${currentUser.uid}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -154,7 +154,7 @@ const DocumentInsights = () => {
       // Note: userId is set on server side from authenticated user
 
       console.log("📤 Sending upload request...");
-      const response = await fetch("/api/documents/rag/upload", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/documents/rag/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -238,7 +238,7 @@ const DocumentInsights = () => {
     try {
       const token = await getIdToken();
       console.log("💬 Sending question:", currentQuery);
-      const response = await fetch("/api/documents/rag/ask", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/documents/rag/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -319,7 +319,7 @@ const DocumentInsights = () => {
   const deleteDocument = async (documentId) => {
     try {
       const token = await getIdToken();
-      const response = await fetch(`/api/documents/files/${documentId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/documents/files/${documentId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

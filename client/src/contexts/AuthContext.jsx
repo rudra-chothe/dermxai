@@ -25,6 +25,8 @@ export const useAuth = () => {
   return context;
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://dermxai-backend-7emr.onrender.com";
+
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         const token = await currentUser.getIdToken();
 
         const response = await fetch(
-          "http://localhost:5000/api/auth/send-verification-email",
+          `${API_BASE_URL}/api/auth/send-verification-email`,
           {
             method: "POST",
             headers: {
@@ -120,7 +122,7 @@ export const AuthProvider = ({ children }) => {
           authToken = `mock-token-${result.user.uid}`;
         }
 
-        const response = await fetch("/api/auth/signup-complete", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/signup-complete`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -202,7 +204,7 @@ export const AuthProvider = ({ children }) => {
           authToken = `mock-token-${result.user.uid}`;
         }
 
-        const response = await fetch("/api/auth/signup-complete", {
+        const response = await fetch(`${API_BASE_URL}/api/auth/signup-complete`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -263,7 +265,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       
-      const response = await fetch("/api/send-reset-password-email", {
+      const response = await fetch(`${API_BASE_URL}/api/send-reset-password-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -342,7 +344,7 @@ export const AuthProvider = ({ children }) => {
             authToken = `mock-token-${currentUser.uid}`;
           }
 
-          const response = await fetch("/api/users/profile", {
+          const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -443,7 +445,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Delete user from backend (which handles both Firebase and MongoDB)
-      const response = await fetch("/api/users/account", {
+      const response = await fetch(`${API_BASE_URL}/api/users/account`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -493,7 +495,7 @@ export const AuthProvider = ({ children }) => {
       const formData = new FormData();
       formData.append("photo", file);
 
-      const response = await fetch("/api/users/profile/photo", {
+      const response = await fetch(`${API_BASE_URL}/api/users/profile/photo`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -561,7 +563,7 @@ export const AuthProvider = ({ children }) => {
               authToken = `mock-token-${user.uid}`;
             }
 
-            const response = await fetch("/api/users/profile", {
+            const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
               headers: {
                 Authorization: `Bearer ${authToken}`,
               },

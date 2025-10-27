@@ -272,7 +272,7 @@ const Diagnose = () => {
       try {
         setLoadingRecent(true);
         const token = await getIdToken();
-        const response = await fetch("/api/diagnosis/recent", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/diagnosis/recent`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
